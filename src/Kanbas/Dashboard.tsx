@@ -27,7 +27,7 @@ const Dashboard: React.FC = () => {
             <div className="card rounded-3 overflow-hidden">
               <Link className="wd-dashboard-course-link text-decoration-none text-dark"
                     to="/Kanbas/Courses/1234/Home">
-                <img src="/logo512.png" width="100%" height={160}/>
+                <img src="/images/react-native.png" width="100%" height={160}/>
                 <div className="card-body">
                   <h5 className="wd-dashboard-course-title card-title">
                     CS1234 React JS
@@ -44,7 +44,7 @@ const Dashboard: React.FC = () => {
             <div className="card rounded-3 overflow-hidden">
               <Link className="wd-dashboard-course-link text-decoration-none text-dark"
                     to="/Kanbas/Courses/1234/Home">
-                <img src="/logo512.png" width="100%" height={160}/>
+                <img src="/images/python.png" width="100%" height={160}/>
                 <div className="card-body">
                   <h5 className="wd-dashboard-course-title card-title">
                     CS1234 React JS
@@ -61,7 +61,7 @@ const Dashboard: React.FC = () => {
             <div className="card rounded-3 overflow-hidden">
               <Link className="wd-dashboard-course-link text-decoration-none text-dark"
                     to="/Kanbas/Courses/1234/Home">
-                <img src="/logo512.png" width="100%" height={160}/>
+                <img src="/images/aws.png" width="100%" height={160}/>
                 <div className="card-body">
                   <h5 className="wd-dashboard-course-title card-title">
                     CS1234 React JS
@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
             <div className="card rounded-3 overflow-hidden">
               <Link className="wd-dashboard-course-link text-decoration-none text-dark"
                     to="/Kanbas/Courses/1234/Home">
-                <img src="/logo512.png" width="100%" height={160}/>
+                <img src="/images/java.png" width="100%" height={160}/>
                 <div className="card-body">
                   <h5 className="wd-dashboard-course-title card-title">
                     CS1234 React JS
@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
             <div className="card rounded-3 overflow-hidden">
               <Link className="wd-dashboard-course-link text-decoration-none text-dark"
                     to="/Kanbas/Courses/1234/Home">
-                <img src="/logo512.png" width="100%" height={160}/>
+                <img src="/images/angular.png" width="100%" height={160}/>
                 <div className="card-body">
                   <h5 className="wd-dashboard-course-title card-title">
                     CS1234 React JS
@@ -112,7 +112,7 @@ const Dashboard: React.FC = () => {
             <div className="card rounded-3 overflow-hidden">
               <Link className="wd-dashboard-course-link text-decoration-none text-dark"
                     to="/Kanbas/Courses/1234/Home">
-                <img src="/logo512.png" width="100%" height={160}/>
+                <img src="/images/mongodb.png" width="100%" height={160}/>
                 <div className="card-body">
                   <h5 className="wd-dashboard-course-title card-title">
                     CS1234 React JS
