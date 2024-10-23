@@ -1,10 +1,14 @@
-import { FaChevronDown } from "react-icons/fa6";
+import { useParams } from "react-router";
+import * as db from '../../Database';
+import { Link } from "react-router-dom";
 
 const AssignmentsEditor: React.FC = () => {
+  const { cid } = useParams();
+  const assignment = db.assignments.find((assignment: any) => assignment.course === cid);
   return (
     <div id="wd-assignments-editor" className="container mt-4">
       <div className="mb-3">
-        <label htmlFor="wd-name">Assignment Name</label>
+        <label htmlFor="wd-name">{assignment?.title}</label>
         <input id="wd-name" className="form-control" value="A1" />
       </div>
 
@@ -14,7 +18,7 @@ const AssignmentsEditor: React.FC = () => {
           id="wd-description"
           className="form-control"
           rows={6}
-          defaultValue="The assignment is available online. Submit a link to the landing page of your Web application running on Netlify. The landing page should include the following: Your full name and section, links to each of the lab assignments, link to the Kanbas application, links to all relevant source code repositories. The Kanbas application should include a link to navigate back to the landing page."
+          defaultValue={assignment?.description}
         />
       </div>
 
@@ -23,7 +27,7 @@ const AssignmentsEditor: React.FC = () => {
           <label htmlFor="wd-points" className="text-end">Points</label>
         </div>
         <div className="col-md-4 px-0">
-          <input id="wd-points" className="form-control" value={100} type="number" />
+          <input id="wd-points" className="form-control" value={assignment?.points} type="number" />
         </div>
       </div>
 
@@ -99,16 +103,16 @@ const AssignmentsEditor: React.FC = () => {
           <input id="wd-assign-to" className="form-control" defaultValue="Everyone" />
           <br />
           <label htmlFor="wd-due-date">Due</label>
-          <input id="wd-due-date" className="form-control" type="date" value="2024-05-13" />
+          <input id="wd-due-date" className="form-control" type="date" value={assignment?.end_date} />
           <br />
           <div className="row">
             <div className="col-md-6">
               <label htmlFor="wd-available-from">Available from</label>
-              <input id="wd-available-from" className="form-control" type="date" value="2024-05-06" />
+              <input id="wd-available-from" className="form-control" type="date" value={assignment?.start_date} />
             </div>
             <div className="col-md-6">
               <label htmlFor="wd-available-until">Until</label>
-              <input id="wd-available-until" className="form-control" type="date" value="2024-05-20" />
+              <input id="wd-available-until" className="form-control" type="date" value={assignment?.end_date} />
             </div>
           </div>
         </div>
@@ -116,8 +120,8 @@ const AssignmentsEditor: React.FC = () => {
 
       <hr />
       <div className="d-flex justify-content-end">
-        <button className="btn btn-secondary me-2">Cancel</button>
-        <button className="btn btn-danger">Save</button>
+        <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-secondary me-2">Cancel</Link>
+        <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-danger">Save</Link>
       </div>
     </div>
 

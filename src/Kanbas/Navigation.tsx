@@ -6,10 +6,19 @@ import { Link, useLocation } from "react-router-dom";
 const KanbasNavigation: React.FC = () => {
 
   const location = useLocation();
-  const isSelected = (path: string) => location.pathname === path;
+  const isSelected = (path: string) => location.pathname.includes(path);
   const selectedClasses = "list-group-item text-center border-0 bg-white text-danger";
   const unselectedClasses = "list-group-item text-white bg-black text-center border-0";
   const defaultAcctClasses = "list-group-item text-center border-0 bg-black text-white";
+
+  const links = [
+    { label: "Dashboard", path: "/Kanbas/Dashboard", icon: AiOutlineDashboard },
+    { label: "Courses",   path: "/Kanbas/Dashboard", icon: LiaBookSolid },
+    { label: "Calendar",  path: "/Kanbas/Calendar",  icon: IoCalendar },
+    { label: "Inbox",     path: "/Kanbas/Inbox",     icon: FaInbox },
+    { label: "Labs",      path: "/Labs",             icon: LiaCogSolid },
+  ];
+
 
   return (
     <div id="wd-kanbas-navigation" style={{ width: 120 }}
@@ -23,31 +32,16 @@ const KanbasNavigation: React.FC = () => {
         <FaRegCircleUser className={"fs-1 text " + (isSelected("/Kanbas/Account/Signin") ? "text-red" : "text-white")} /><br />
         Account
       </Link>
-      <Link to="/Kanbas/Dashboard" id="wd-dashboard-link"
-      className={isSelected('/Kanbas/Dashboard') ? selectedClasses : unselectedClasses}>
-        <AiOutlineDashboard className="fs-1 text-danger" /><br />
-        Dashboard
-      </Link>
-      <Link to="/Kanbas/Dashboard" id="wd-course-link"
-      className={isSelected('/Kanbas/Dashboard') ? selectedClasses : unselectedClasses}>
-        <LiaBookSolid className="fs-1 text-danger" /><br />
-        Courses
-      </Link>
-      <Link to="/Kanbas/Calendar" id="wd-calendar-link"
-      className={isSelected("/Kanbas/Calendar") ? selectedClasses : unselectedClasses}>
-        <IoCalendar className="fs-1 text-danger" /><br />
-        Calendar
-        </Link>
-      <Link to="/Kanbas/Inbox" id="wd-inbox-link"
-      className={isSelected("/Kanbas/Inbox") ? selectedClasses : unselectedClasses}>
-        <FaInbox className="fs-1 text-danger" /><br />
-        Inbox
-      </Link>
-      <Link to="/Labs" id="wd-labs-link"
-      className={isSelected("/Labs") ? selectedClasses : unselectedClasses}>
-        <LiaCogSolid className="fs-1 text-danger" /><br />
-        Labs
-      </Link>
+
+      {
+        links.map((link) => (
+          <Link key={link.path} to={link.path} id={"wd-" + link.label.toLowerCase() + "-link"}
+          className={isSelected(link.path) ? selectedClasses : unselectedClasses}>
+            {link.icon({ className: "fs-1 text-danger" })}<br />
+            {link.label}
+          </Link>
+        ))
+      }
     </div>
   );
 };
