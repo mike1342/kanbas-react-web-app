@@ -1,16 +1,20 @@
 import { Link, useLocation } from "react-router-dom";
 import '../styles.css';
+import { useSelector } from "react-redux";
 
 const AccountNavigation: React.FC = () => {
-    const location = useLocation();
+  const location = useLocation();
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+
   const classes = (path: string) => location.pathname === path ? "list-group-item active border border-0" : "list-group-item text-danger border border-0";
-    return (
-        <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
-        <Link to={`/Kanbas/Account/Signin`} className={classes("/Kanbas/Account/Signin")}  > Signin  </Link> <br/>
-        <Link to={`/Kanbas/Account/Signup`} className={classes("/Kanbas/Account/Signup")}  > Signup  </Link> <br/>
-        <Link to={`/Kanbas/Account/Profile`} className={classes("/Kanbas/Account/Profile")} > Profile </Link> <br/>
-        </div>
-    );
+  return (
+      <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
+      {links.map((link) => (
+        <><Link to={`/Kanbas/Account/${link}`} className={classes(`/Kanbas/Account/${link}`)}> {link} </Link><br /></>
+      ))}
+      </div>
+  );
 };
 
 export default AccountNavigation;
