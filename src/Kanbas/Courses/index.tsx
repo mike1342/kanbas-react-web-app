@@ -30,6 +30,7 @@ const Courses = ({ courses }: { courses: any[]; }) => {
             <Route path="Modules" element={<Modules />} />
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentsEditor />} />
+            <Route path="Assignments/NewAssignment" element={<AssignmentsEditor />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>

@@ -1,6 +1,6 @@
 import { IoEllipsisVertical } from "react-icons/io5";
 import { BsPlus } from "react-icons/bs";
-import GreenCheckmark from "./GreenCheckmark";
+import GreenCheckmark from "../GreenCheckmark";
 import { FaTrash } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 export default function ModuleControlButtons(

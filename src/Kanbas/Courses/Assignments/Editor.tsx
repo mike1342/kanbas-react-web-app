@@ -1,15 +1,44 @@
-import { useParams } from "react-router";
-import * as db from '../../Database';
+import { useLocation, useParams } from "react-router";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { addAssignment, updateAssignment } from "./reducer";
+import { useDispatch, useSelector } from "react-redux";
+import * as uuid from 'uuid';
+
+const emptyAssignment = {
+  _id: "", 
+  title: "", 
+  course: "",
+  start_date: "",
+  end_date: "",
+  points: 100, 
+  description: ""
+};
 
 const AssignmentsEditor: React.FC = () => {
-  const { cid } = useParams();
-  const assignment = db.assignments.find((assignment: any) => assignment.course === cid);
+  const { aid, cid } = useParams();
+  const { pathname } = useLocation();
+  const dispatch = useDispatch();
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+
+  const addingAssignment = pathname.includes("NewAssignment");
+  const initAssignment =  addingAssignment ? emptyAssignment : assignments.find((assignment: any) => assignment._id === aid);
+
+  const [assignment, setAssignment] = useState<any>(initAssignment);
+
+  const handleSave = () => {
+    if (addingAssignment) {
+      dispatch(addAssignment({...assignment, _id: uuid.v4(), course: cid}));
+    } else {
+      dispatch(updateAssignment(assignment));
+    }
+  };
+
   return (
     <div id="wd-assignments-editor" className="container mt-4">
       <div className="mb-3">
-        <label htmlFor="wd-name">{assignment?.title}</label>
-        <input id="wd-name" className="form-control" value="A1" />
+        <label htmlFor="wd-name">Assignment Name</label>
+        <input id="wd-name" className="form-control" value={assignment?.title} onChange={(e) => setAssignment({ ...assignment, title:  e.target.value })} />
       </div>
 
       <div className="mb-3">
@@ -19,6 +48,7 @@ const AssignmentsEditor: React.FC = () => {
           className="form-control"
           rows={6}
           defaultValue={assignment?.description}
+          onChange={(e) => setAssignment({ ...assignment, description:  e.target.value })}
         />
       </div>
 
@@ -27,7 +57,7 @@ const AssignmentsEditor: React.FC = () => {
           <label htmlFor="wd-points" className="text-end">Points</label>
         </div>
         <div className="col-md-4 px-0">
-          <input id="wd-points" className="form-control" value={assignment?.points} type="number" />
+          <input id="wd-points" className="form-control" value={assignment?.points} type="number" onChange={(e) => setAssignment({ ...assignment, points:  e.target.value })} />
         </div>
       </div>
 
@@ -103,16 +133,16 @@ const AssignmentsEditor: React.FC = () => {
           <input id="wd-assign-to" className="form-control" defaultValue="Everyone" />
           <br />
           <label htmlFor="wd-due-date">Due</label>
-          <input id="wd-due-date" className="form-control" type="date" value={assignment?.end_date} />
+          <input id="wd-due-date" className="form-control" type="date" value={assignment?.end_date} onChange={(e) => setAssignment({ ...assignment, end_date:  e.target.value })}/>
           <br />
           <div className="row">
             <div className="col-md-6">
               <label htmlFor="wd-available-from">Available from</label>
-              <input id="wd-available-from" className="form-control" type="date" value={assignment?.start_date} />
+              <input id="wd-available-from" className="form-control" type="date" value={assignment?.start_date} onChange={(e) => setAssignment({ ...assignment, start_date:  e.target.value })} />
             </div>
             <div className="col-md-6">
               <label htmlFor="wd-available-until">Until</label>
-              <input id="wd-available-until" className="form-control" type="date" value={assignment?.end_date} />
+              <input id="wd-available-until" className="form-control" type="date" value={assignment?.end_date} onChange={(e) => setAssignment({ ...assignment, end_date:  e.target.value })}/>
             </div>
           </div>
         </div>
@@ -121,7 +151,7 @@ const AssignmentsEditor: React.FC = () => {
       <hr />
       <div className="d-flex justify-content-end">
         <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-secondary me-2">Cancel</Link>
-        <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-danger">Save</Link>
+        <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-danger" onClick={handleSave}>Save</Link>
       </div>
     </div>
 

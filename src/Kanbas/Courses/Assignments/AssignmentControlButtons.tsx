@@ -1,11 +1,11 @@
 import { IoEllipsisVertical } from "react-icons/io5";
-import { BsPlus } from "react-icons/bs";
-
-export default function AssignmentControlButtons(props: {percentage: string}) {
+import GreenCheckmark from "../GreenCheckmark";
+import { FaTrash } from "react-icons/fa";
+export default function AssignmentControlButtons({deleteAssignment, assignmentId}: {deleteAssignment: (assignmentId: string) => void; assignmentId: string;}) {
   return (
     <div className="float-end">
-      <span className="me-2 border border-black rounded p-1">{`${props.percentage}% of Total`}</span>
-      <BsPlus />
+      <FaTrash className="text-danger me-2 mb-1" onClick={() => deleteAssignment(assignmentId)}/>
+      <GreenCheckmark />
       <IoEllipsisVertical className="fs-4" />
     </div>
   );
