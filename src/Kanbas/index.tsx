@@ -21,6 +21,8 @@ const Kanbas: React.FC = () => {
     });
 
     const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
+
     const fetchCourses = async () => {
         try {
             const courses = await userClient.findMyCourses();
@@ -40,7 +42,7 @@ const Kanbas: React.FC = () => {
 
     useEffect(() => {
         fetchCourses();
-    }, [currentUser]);
+    }, [currentUser, enrollments]);
 
     useEffect(() => {
         fetchAllCourses();
