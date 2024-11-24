@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import { addEnrollment, deleteEnrollment } from "./enrollmentsReducer";
-import * as uuid from 'uuid';
+import { useEffect, useState } from "react";
+import { addEnrollment, deleteEnrollment, setEnrollments } from "./enrollmentsReducer";
+import * as enrollmentsClient from "./enrollmentsClient";
 
-const Dashboard = ({ courses, course, setCourse, addNewCourse,
+const Dashboard = ({ courses, userCourses, course, setCourse, addNewCourse,
   deleteCourse, updateCourse }: {
-  courses: any[]; course: any; setCourse: (course: any) => void;
+  courses: any[]; userCourses: any[]; course: any; setCourse: (course: any) => void;
   addNewCourse: () => void; deleteCourse: (course: any) => void;
   updateCourse: () => void; }) => {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -15,11 +15,37 @@ const Dashboard = ({ courses, course, setCourse, addNewCourse,
 
   const [showAllCourses, setShowAllCourses] = useState(false);
 
+  useEffect(() => {
+    console.log(enrollments);
+  }, [enrollments]);
+  
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      console.log('fetching enrollments');
+      const enrollments = await enrollmentsClient.findEnrollments(currentUser._id);
+      dispatch(setEnrollments(enrollments));
+    };
+
+    fetchEnrollments();
+  }, []);
+
+  const saveEnrollment = async (event: any, course: any) => {
+    event.preventDefault();
+    const enrollment = await enrollmentsClient.createEnrollment(currentUser._id, course._id);
+    dispatch(addEnrollment(enrollment));
+  };
+
+  const removeEnrollment = async (event: any, enrollment: any) => {
+    event.preventDefault();
+    await enrollmentsClient.deleteEnrollment(enrollment._id);
+    dispatch(deleteEnrollment(enrollment._id));
+  }
+
   const toggleEnrollments = () => {
     setShowAllCourses(state => !state);
   };
 
-  const checkEnrollment = (enrollment: any, course: any) => enrollment.user === currentUser._id && enrollment.course === course._id;
+  const checkEnrollment = (enrollment: any, course: any) => enrollment.course === course._id;
 
   const handleLinkClick = (event: any, course: any) => {
     if (!enrollments.find((enrollment: any) => checkEnrollment(enrollment, course))) {
@@ -45,8 +71,7 @@ const Dashboard = ({ courses, course, setCourse, addNewCourse,
       <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {courses.filter((course) =>
-            enrollments.some((enrollment: any) => showAllCourses ? true : checkEnrollment(enrollment, course)))
+          {(showAllCourses ? courses : userCourses)
           .map((course) => {
             const enrollment = enrollments.find((enrollment: any) => checkEnrollment(enrollment, course));
             return (
@@ -64,14 +89,8 @@ const Dashboard = ({ courses, course, setCourse, addNewCourse,
                     </p>
                     {showAllCourses ? 
                       !enrollment ?
-                        <button className="btn btn-success" onClick={(event) => {
-                          event.preventDefault();
-                          dispatch(addEnrollment({_id: uuid.v4(), user: currentUser._id, course: course._id}))
-                        }}> Enroll </button> :
-                        <button className="btn btn-danger" onClick={(event) => {
-                          event.preventDefault();
-                          dispatch(deleteEnrollment(enrollment._id))
-                        }}> Unenroll </button>
+                        <button className="btn btn-success" onClick={(event) => saveEnrollment(event, course)}> Enroll </button> :
+                        <button className="btn btn-danger" onClick={(event) => removeEnrollment(event, enrollment)}> Unenroll </button>
                     : <button className="btn btn-primary"> Go </button>}
                     {currentUser.role === "FACULTY" && <><button id="wd-edit-course-click"
                       onClick={(event) => {

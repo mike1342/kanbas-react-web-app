@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { addAssignment, updateAssignment } from "./reducer";
 import { useDispatch, useSelector } from "react-redux";
-import * as uuid from 'uuid';
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 const emptyAssignment = {
   _id: "", 
@@ -26,10 +27,14 @@ const AssignmentsEditor: React.FC = () => {
 
   const [assignment, setAssignment] = useState<any>(initAssignment);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!cid) return;
     if (addingAssignment) {
-      dispatch(addAssignment({...assignment, _id: uuid.v4(), course: cid}));
+      const newAssignment = {...assignment, course: cid};
+      const assignmentFromDb = await coursesClient.createModuleForCourse(cid, newAssignment);
+      dispatch(addAssignment(assignmentFromDb));
     } else {
+      await assignmentsClient.updateAssignment(assignment);
       dispatch(updateAssignment(assignment));
     }
   };

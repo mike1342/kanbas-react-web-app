@@ -6,13 +6,30 @@ import "../../styles.css";
 import { VscNotebook } from "react-icons/vsc";
 import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import { useEffect } from "react";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 const Assignments: React.FC = () => {
   const { cid } = useParams();
   const dispatch = useDispatch();
   const { assignments } = useSelector((state: any) => state.assignmentsReducer); 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+
+  const fetchAssignments = async () => {
+    const assignments = await coursesClient.findAssigmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
+  const removeAssignment = async (assignmentId: string) => {
+    await assignmentsClient.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+  };
+
 
   const dateFormat = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -49,7 +66,7 @@ const Assignments: React.FC = () => {
           </div>
           {assignments && (
             <ul id="wd-assignment-list" className="list-group rounded-0">
-              {assignments.filter((assignment: any) => assignment.course === cid).map((assignment: any) => (
+              {assignments.map((assignment: any) => (
                 <li className="wd-assignment-list-item list-group-item p-3 ps-1 d-flex align-items-center">
                   <BsGripVertical className="me-2 fs-3"/>
                   <VscNotebook className="me-2 fs-3 text-success" />
@@ -68,9 +85,7 @@ const Assignments: React.FC = () => {
                   <div className="d-flex flex-grow-1"/>
 
                   {currentUser.role === "FACULTY" && <div className="assignment-item-control-btns">
-                    <AssignmentControlButtons deleteAssignment={(assignmentId) => {
-                      dispatch(deleteAssignment(assignmentId));
-                    }} assignmentId={assignment._id} />
+                    <AssignmentControlButtons deleteAssignment={removeAssignment} assignmentId={assignment._id} />
                   </div>}
                 </li>
               ))}
