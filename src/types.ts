@@ -1,15 +1,16 @@
-type QuizType = 'gradedQuiz' | 'practiceQuiz' | 'gradedSurvey' | 'ungradedSurvey';
-type AssignmentType = 'quiz' | 'exam' | 'assignment' | 'project';
+export type QuizType = 'gradedQuiz' | 'practiceQuiz' | 'gradedSurvey' | 'ungradedSurvey';
+export type AssignmentType = 'quiz' | 'exam' | 'assignment' | 'project';
+export type QuestionType = 'MC' | 'TF' | 'FillIn';
 
-interface Question {
+export interface Question {
   _id: string;
   title: string;
   question: string;
   points: number;
-  questionType: string;
+  questionType: QuestionType;
 };
 
-interface QuestionAttempt extends Question {}
+export interface QuestionAttempt extends Question {}
 
 export interface MCQuestion extends Question {
   choices: string[];
