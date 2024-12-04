@@ -17,11 +17,11 @@ const quizSlice = createSlice({
     },
     deleteQuiz(state, {payload: quizId}) {
       state.quizzes = state.quizzes.filter(
-        (m: any) => m._id !== quizId);
+        (q: any) => q._id !== quizId);
     },
     updateQuiz(state, {payload: quiz}) {
-      state.quizzes = state.quizzes.map((a: any) =>
-        a._id === quiz._id ? quiz : a
+      state.quizzes = state.quizzes.map((q: any) =>
+        q._id === quiz._id ? quiz : q
       ) as any;
     },
   },
