@@ -6,8 +6,9 @@ import Assignments from "./Assignments";
 import AssignmentsEditor from "./Assignments/Editor";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
+import Quizzes from "./Quizzes";
 
-const Courses = ({ courses }: { courses: any[]; }) => {
+const Courses = ({ courses }: { courses: any[] }) => {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
@@ -21,7 +22,7 @@ const Courses = ({ courses }: { courses: any[]; }) => {
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">
-            <CoursesNavigation />
+          <CoursesNavigation />
         </div>
         <div className="flex-fill">
           <Routes>
@@ -30,7 +31,11 @@ const Courses = ({ courses }: { courses: any[]; }) => {
             <Route path="Modules" element={<Modules />} />
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentsEditor />} />
-            <Route path="Assignments/NewAssignment" element={<AssignmentsEditor />} />
+            <Route
+              path="Assignments/NewAssignment"
+              element={<AssignmentsEditor />}
+            />
+            <Route path="Quizzes" element={<Quizzes />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>
