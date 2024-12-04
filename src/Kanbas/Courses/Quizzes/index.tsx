@@ -66,7 +66,7 @@ export default function Quizzes() {
               <a
                 id="wd-add-quiz"
                 className="btn btn-md btn-danger me-1 float-end"
-                href={`#/Kanbas/Courses/${cid}/Quizes/NewQuiz`}
+                href={`#/Kanbas/Courses/${cid}/Quizzes/NewQuiz`}
               >
                 <FaPlus
                   className="position-relative me-2"
