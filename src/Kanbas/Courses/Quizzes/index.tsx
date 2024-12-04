@@ -20,7 +20,6 @@ export default function Quizzes() {
 
   const handlePublishToggle = () => {
     setIsPublished(!isPublished);
-    console.log(isPublished ? "Quiz unpublished." : "Quiz published.");
   };
 
   return (
