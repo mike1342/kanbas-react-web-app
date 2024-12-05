@@ -100,22 +100,6 @@ export default function FillInBlank({ formField }: { formField: string }) {
           </Button>
         </Form.Item>
       </Form>
-      <hr />
-      <div className="d-flex justify-content-end" style={{ gap: "0.5%" }}>
-        <Button color="danger" variant="solid">
-          Save
-        </Button>
-        <Button
-          variant="solid"
-          onClick={() =>
-            navigate(`/Kanbas/Courses/${cid}/Quizzes/NewQuiz`, {
-              state: { activeTab: "2" },
-            })
-          }
-        >
-          Cancel
-        </Button>
-      </div>
     </div>
   );
 }
