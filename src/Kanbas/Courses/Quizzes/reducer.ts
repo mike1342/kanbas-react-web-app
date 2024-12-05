@@ -1,25 +1,34 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Quiz } from '../../../types';
 
-const initialState = {
-  quizzes: [] as any,
+interface QuizState {
+  quizzes: Quiz[];
+}
+
+const initialState: QuizState = {
+  quizzes: [],
 };
 
 const quizSlice = createSlice({
   name: 'quizzes',
   initialState,
   reducers: {
-    setQuizzes(state, {payload: quizzes}) {
+    setQuizzes(state, action: PayloadAction<Quiz[]>) {
+      const quizzes = action.payload;
       state.quizzes = quizzes;
     },
-    addQuiz(state, {payload: quiz}) {
+    addQuiz(state, action: PayloadAction<Quiz>) {
+      const quiz = action.payload;
       console.log(quiz);
-      state.quizzes = [...state.quizzes, quiz]
+      state.quizzes = [...state.quizzes, quiz];
     },
-    deleteQuiz(state, {payload: quizId}) {
+    deleteQuiz(state, action: PayloadAction<string>) {
+      const quizId = action.payload;
       state.quizzes = state.quizzes.filter(
         (q: any) => q._id !== quizId);
     },
-    updateQuiz(state, {payload: quiz}) {
+    updateQuiz(state, action: PayloadAction<Quiz>) {
+      const quiz = action.payload;
       state.quizzes = state.quizzes.map((q: any) =>
         q._id === quiz._id ? quiz : q
       ) as any;
