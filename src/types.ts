@@ -67,4 +67,5 @@ export interface Quiz {
   availableUntil: Date;
   questions: Question[];
   quizAttempts: QuizAttempt[];
+  description?: string;
 };
