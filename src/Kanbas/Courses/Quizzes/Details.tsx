@@ -10,10 +10,31 @@ import {
   Button,
 } from "antd";
 import { useNavigate, useParams } from "react-router";
+import { Quiz, QuizType, AssignmentType } from "./../../../types";
+import { useState } from "react";
+
 export default function Details() {
   const { TextArea } = Input;
   const navigate = useNavigate();
-  const cid = useParams();
+  const { cid } = useParams<{ cid: string }>();
+
+  const [quiz, setQuiz] = useState<Partial<Quiz>>({
+    title: "Unnamed Quiz",
+    quizType: "gradedQuiz",
+    assignmentGroup: "quiz",
+    shuffleAnswers: true,
+    timeLimit: 20,
+    multipleAttempts: false,
+    showCorrectAnswers: false,
+    oneQuestionAtATime: true,
+    webcamRequired: false,
+    lockQuestionsAfterAnswering: false,
+  });
+
+  const handleInputChange = (field: keyof Quiz, value: any) => {
+    setQuiz((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div id="wd-quiz-details">
       <hr />
@@ -24,23 +45,32 @@ export default function Details() {
         wrapperCol={{ span: 10 }}
       >
         <Form.Item>
-          <Input defaultValue={"Unnamed Quiz"} />
+          <Input
+            defaultValue={quiz.title}
+            onChange={(e) => handleInputChange("title", e.target.value)}
+          />
         </Form.Item>
       </Form>
       <h6>Quiz Instructions:</h6>
       <Form.Item className="instructions">
-        <TextArea rows={4} />
+        <TextArea
+          rows={4}
+          onChange={(e) => handleInputChange("description", e.target.value)}
+        />
       </Form.Item>
       <Form.Item
         label="Quiz Type"
         className="quiz-type"
         wrapperCol={{ span: 6 }}
       >
-        <Select defaultValue={"graded-quiz"}>
-          <Select.Option value="graded-quiz">Graded Quiz</Select.Option>
-          <Select.Option value="practice-quiz">Practice Quiz</Select.Option>
-          <Select.Option value="graded-survey">Graded Survey</Select.Option>
-          <Select.Option value="ungraded-survey">Ungraded Survey</Select.Option>
+        <Select
+          defaultValue={quiz.quizType}
+          onChange={(value: QuizType) => handleInputChange("quizType", value)}
+        >
+          <Select.Option value="gradedQuiz">Graded Quiz</Select.Option>
+          <Select.Option value="practiceQuiz">Practice Quiz</Select.Option>
+          <Select.Option value="gradedSurvey">Graded Survey</Select.Option>
+          <Select.Option value="ungradedSurvey">Ungraded Survey</Select.Option>
         </Select>
       </Form.Item>
       <Form.Item
@@ -48,11 +78,16 @@ export default function Details() {
         className="assignment-type"
         wrapperCol={{ span: 6 }}
       >
-        <Select defaultValue={"at-quizzes"}>
-          <Select.Option value="at-quizzes">Quizzes</Select.Option>
-          <Select.Option value="at-exams">Exams</Select.Option>
-          <Select.Option value="at-assignments">Assignment</Select.Option>
-          <Select.Option value="at-projects">Projects</Select.Option>
+        <Select
+          defaultValue={quiz.assignmentGroup}
+          onChange={(value: AssignmentType) =>
+            handleInputChange("assignmentGroup", value)
+          }
+        >
+          <Select.Option value="quiz">Quizzes</Select.Option>
+          <Select.Option value="exam">Exams</Select.Option>
+          <Select.Option value="assignment">Assignment</Select.Option>
+          <Select.Option value="project">Projects</Select.Option>
         </Select>
       </Form.Item>
       <Card title="Options" style={{ borderRadius: "8px", padding: "16px" }}>
@@ -60,36 +95,79 @@ export default function Details() {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Shuffle Answers" valuePropName="checked">
-                <Switch defaultChecked />
+                <Switch
+                  defaultChecked={quiz.shuffleAnswers}
+                  onChange={(checked) =>
+                    handleInputChange("shuffleAnswers", checked)
+                  }
+                />
               </Form.Item>
               <Form.Item label="Time Limit" valuePropName="checked">
-                <Switch defaultChecked />
+                <Switch
+                  defaultChecked={!!quiz.timeLimit}
+                  onChange={(checked) =>
+                    handleInputChange("timeLimit", checked ? 20 : 0)
+                  }
+                />
               </Form.Item>
               <Form.Item label="Multiple Answers" valuePropName="checked">
-                <Switch />
+                <Switch
+                  onChange={(checked) =>
+                    handleInputChange("multipleAttempts", checked)
+                  }
+                />
               </Form.Item>
               <Form.Item label="One Question At A Time" valuePropName="checked">
-                <Switch defaultChecked />
+                <Switch
+                  defaultChecked={quiz.oneQuestionAtATime}
+                  onChange={(checked) =>
+                    handleInputChange("oneQuestionAtATime", checked)
+                  }
+                />
               </Form.Item>
               <Form.Item
                 label="Lock Questions After Answering"
                 valuePropName="checked"
               >
-                <Switch />
+                <Switch
+                  onChange={(checked) =>
+                    handleInputChange("lockQuestionsAfterAnswering", checked)
+                  }
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Show Correct Answers" valuePropName="checked">
-                <Switch />
+                <Switch
+                  onChange={(checked) =>
+                    handleInputChange("showCorrectAnswers", checked)
+                  }
+                />
               </Form.Item>
               <Form.Item label="Minutes:" wrapperCol={{ span: 2 }}>
-                <Input defaultValue={"20"} />
+                <Input
+                  defaultValue={quiz.timeLimit}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "timeLimit",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
+                />
               </Form.Item>
               <Form.Item label="Access Code" wrapperCol={{ span: 4 }}>
-                <Input />
+                <Input
+                  onChange={(e) =>
+                    handleInputChange("accessCode", e.target.value)
+                  }
+                />
               </Form.Item>
               <Form.Item label="Webcam Required" valuePropName="checked">
-                <Switch />
+                <Switch
+                  onChange={(checked) =>
+                    handleInputChange("webcamRequired", checked)
+                  }
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -101,24 +179,32 @@ export default function Details() {
         style={{ borderRadius: "8px", padding: "16px" }}
       >
         <Form.Item label="Due" name="DueDate">
-          <DatePicker style={{ width: "100%" }} />
+          <DatePicker
+            style={{ width: "100%" }}
+            onChange={(date) => handleInputChange("dueDate", date)}
+          />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item label="Available From" name="AvailableFromDate">
-              <DatePicker style={{ width: "100%" }} />
+              <DatePicker
+                style={{ width: "100%" }}
+                onChange={(date) => handleInputChange("availableFrom", date)}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="Until" name="AvailableUntilDate">
-              <DatePicker style={{ width: "100%" }} />
+              <DatePicker
+                style={{ width: "100%" }}
+                onChange={(date) => handleInputChange("availableUntil", date)}
+              />
             </Form.Item>
           </Col>
         </Row>
       </Card>
       <hr />
       <div className="d-flex justify-content-end" style={{ gap: "0.5%" }}>
-        {" "}
         <Button color="danger" variant="solid">
           Save
         </Button>
