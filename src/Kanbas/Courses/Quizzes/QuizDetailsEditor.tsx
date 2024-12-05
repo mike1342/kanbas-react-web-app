@@ -2,8 +2,11 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Details from "./Details";
 import Questions from "./Questions";
+import { useLocation } from "react-router";
 
 export default function QuizDetailsEditor() {
+  const location = useLocation();
+  const activeTabFromState = location.state?.activeTab || "1";
   const onChange = (key: string) => {
     console.log(key);
   };
@@ -23,7 +26,7 @@ export default function QuizDetailsEditor() {
     <div id="wd-quiz-details-editor">
       <Tabs
         type="card"
-        defaultActiveKey="1"
+        defaultActiveKey={activeTabFromState}
         items={items}
         onChange={onChange}
       />
