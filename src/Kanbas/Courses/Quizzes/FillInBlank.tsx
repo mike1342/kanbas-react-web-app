@@ -69,7 +69,7 @@ export default function FillInBlank({ formField }: { formField: string }) {
             }
           />
         </Form.Item>
-
+        <hr />
         <Form.Item label="Answers">
           {question.correctAnswers.map((answer, index) => (
             <Row key={index} gutter={8} style={{ marginBottom: "8px" }}>
