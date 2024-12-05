@@ -9,10 +9,11 @@ import {
   DatePicker,
   Button,
 } from "antd";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 export default function Details() {
   const { TextArea } = Input;
   const navigate = useNavigate();
+  const cid = useParams();
   return (
     <div id="wd-quiz-details">
       <hr />
@@ -129,7 +130,7 @@ export default function Details() {
         </Button>
         <Button
           variant="solid"
-          onClick={() => navigate("/Kanbas/Courses/RS101/Quizzes")}
+          onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes`)}
         >
           Cancel
         </Button>

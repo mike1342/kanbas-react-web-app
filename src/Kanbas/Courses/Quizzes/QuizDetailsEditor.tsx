@@ -1,6 +1,7 @@
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Details from "./Details";
+import Questions from "./Questions";
 
 export default function QuizDetailsEditor() {
   const onChange = (key: string) => {
@@ -15,7 +16,7 @@ export default function QuizDetailsEditor() {
     {
       key: "2",
       label: "Questions",
-      children: "Content of Tab Pane 2",
+      children: <Questions />,
     },
   ];
   return (
