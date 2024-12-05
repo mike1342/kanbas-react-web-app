@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { Button, Col, Form, Input, Row, Space, Switch } from "antd";
+import { Button, Form, Input, Space, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useNavigate, useParams } from "react-router";
 import { FaTrash } from "react-icons/fa";
 import { MCQuestion } from "./../../../types";
 
-export default function MultipleChoice() {
-  const navigate = useNavigate();
-  const { cid } = useParams();
-
+export default function MultipleChoice({ formField }: { formField: string }) {
   const [question, setQuestion] = useState<MCQuestion>({
     _id: "",
     title: "",
@@ -53,42 +49,38 @@ export default function MultipleChoice() {
 
   return (
     <div className="quiz-mc-question">
-      <h5>New Multiple Choice Question</h5>
-      <hr />
       <Form
         name="layout-multiple-horizontal"
         layout="horizontal"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 10 }}
       >
-        <Row>
-          <Col span={14}>
-            <Form.Item
-              label="Question:"
-              name="question-editor"
-              wrapperCol={{ span: 50 }}
-            >
-              <TextArea
-                rows={4}
-                value={question.question}
-                onChange={(e) =>
-                  setQuestion({ ...question, question: e.target.value })
-                }
-              />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="Points:" wrapperCol={{ span: 4 }}>
-              <Input
-                type="number"
-                value={question.points}
-                onChange={(e) =>
-                  setQuestion({ ...question, points: Number(e.target.value) })
-                }
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item label="Points:" wrapperCol={{ span: 4 }}>
+          <Input
+            type="number"
+            value={question.points}
+            onChange={(e) =>
+              setQuestion((prevQuestion) => ({
+                ...prevQuestion,
+                points: Number(e.target.value),
+              }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          wrapperCol={{ span: 50 }}
+          name={[formField, "question"]}
+          label="Question"
+        >
+          <TextArea
+            rows={4}
+            value={question.question}
+            onChange={(e) =>
+              setQuestion({ ...question, question: e.target.value })
+            }
+          />
+        </Form.Item>
+
         <hr />
         <Form.Item label="Answers:" wrapperCol={{ span: 16 }}>
           {question.choices.map((choice, index) => (
@@ -122,22 +114,6 @@ export default function MultipleChoice() {
           </Button>
         </Form.Item>
       </Form>
-      <hr />
-      <div className="d-flex justify-content-end" style={{ gap: "0.5%" }}>
-        <Button color="danger" variant="solid">
-          Save
-        </Button>
-        <Button
-          variant="solid"
-          onClick={() =>
-            navigate(`/Kanbas/Courses/${cid}/Quizzes/NewQuiz`, {
-              state: { activeTab: "2" },
-            })
-          }
-        >
-          Cancel
-        </Button>
-      </div>
     </div>
   );
 }

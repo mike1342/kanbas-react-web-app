@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { FillInQuestion } from "../../../types";
 
-export default function FillInBlank() {
+export default function FillInBlank({ formField }: { formField: string }) {
   const navigate = useNavigate();
   const { cid } = useParams();
   const [question, setQuestion] = useState<FillInQuestion>({
@@ -15,10 +15,6 @@ export default function FillInBlank() {
     questionType: "FillIn",
     correctAnswers: [""],
   });
-
-  const handleQuestionChange = (field: keyof FillInQuestion, value: any) => {
-    setQuestion((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleAnswerChange = (index: number, value: string) => {
     const updatedAnswers = [...question.correctAnswers];
@@ -42,48 +38,38 @@ export default function FillInBlank() {
 
   return (
     <div className="fill-in-question">
-      <h5>New Fill In The Blank Question</h5>
-      <hr />
       <Form
         name="layout-multiple-horizontal"
         layout="horizontal"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 10 }}
       >
-        <Row>
-          <Col span={14}>
-            <Form.Item
-              label="Question:"
-              name="question-editor"
-              wrapperCol={{ span: 50 }}
-            >
-              <TextArea
-                rows={4}
-                value={question.question}
-                onChange={(e) =>
-                  setQuestion((prevQuestion) => ({
-                    ...prevQuestion,
-                    question: e.target.value,
-                  }))
-                }
-              />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="Points:" wrapperCol={{ span: 4 }}>
-              <Input
-                type="number"
-                value={question.points}
-                onChange={(e) =>
-                  setQuestion((prevQuestion) => ({
-                    ...prevQuestion,
-                    points: Number(e.target.value),
-                  }))
-                }
-              />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item label="Points:" wrapperCol={{ span: 4 }}>
+          <Input
+            type="number"
+            value={question.points}
+            onChange={(e) =>
+              setQuestion((prevQuestion) => ({
+                ...prevQuestion,
+                points: Number(e.target.value),
+              }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          wrapperCol={{ span: 50 }}
+          name={[formField, "question"]}
+          label="Question"
+        >
+          <TextArea
+            rows={4}
+            value={question.question}
+            onChange={(e) =>
+              setQuestion({ ...question, question: e.target.value })
+            }
+          />
+        </Form.Item>
+
         <Form.Item label="Answers">
           {question.correctAnswers.map((answer, index) => (
             <Row key={index} gutter={8} style={{ marginBottom: "8px" }}>

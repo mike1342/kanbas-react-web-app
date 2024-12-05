@@ -1,65 +1,87 @@
-import { Button, Dropdown, MenuProps, Space, message } from "antd";
-import { useNavigate, useParams } from "react-router";
+import { Button, Card, Form, Input } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import { Segmented } from "antd";
+import { useState } from "react";
+import MultipleChoice from "./MultipleChoice";
+import TrueFalse from "./TrueFalse";
+import FillInBlank from "./FillInBlank";
 
 export default function Questions() {
-  const { cid } = useParams();
-  const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [selectedType, setSelectedType] = useState("Multiple Choice");
 
-  const handleMenuClick: MenuProps["onClick"] = (e) => {};
-
-  const items: MenuProps["items"] = [
-    {
-      label: "True/False",
-      key: "1",
-      onClick: () =>
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/NewQuiz/NewTrueFalseQ`),
-    },
-    {
-      label: "Multiple Choice",
-      key: "2",
-      onClick: () => navigate(`/Kanbas/Courses/${cid}/Quizzes/NewQuiz/NewMCQ`),
-    },
-    {
-      label: "Fill In The Blank",
-      key: "3",
-      onClick: () =>
-        navigate(`/Kanbas/Courses/${cid}/Quizzes/NewQuiz/NewFillInBlankQ`),
-    },
-  ];
-
-  const menuProps = {
-    items,
-    onClick: handleMenuClick,
+  const renderQuestionComponent = (type: string, fieldName: string) => {
+    switch (type) {
+      case "Multiple Choice":
+        return <MultipleChoice formField={fieldName} />;
+      case "True/False":
+        return <TrueFalse formField={fieldName} />;
+      case "Fill In Blank":
+        return <FillInBlank formField={fieldName} />;
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="quizzes-questions">
-      <h5 className="d-flex justify-content-end">Points: 0</h5>
-      <hr />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <Dropdown menu={menuProps}>
-          <Button>
-            <Space>+ New Question</Space>
-          </Button>
-        </Dropdown>
-      </div>
-      <hr />
-      <div className="d-flex justify-content-center" style={{ gap: "0.5%" }}>
-        <Button color="danger" variant="solid">
-          Save
-        </Button>
-        <Button
-          variant="solid"
-          onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes`)}
-        >
-          Cancel
-        </Button>
-      </div>
-    </div>
+    <Form
+      labelCol={{ span: 6 }}
+      wrapperCol={{ span: 18 }}
+      form={form}
+      name="dynamic_form_complex"
+      style={{ maxWidth: 600 }}
+      autoComplete="off"
+      initialValues={{ items: [] }}
+    >
+      <Form.List name="items">
+        {(fields, { add, remove }) => (
+          <div style={{ display: "flex", rowGap: 16, flexDirection: "column" }}>
+            {fields.map((field) => (
+              <Card
+                size="small"
+                title={`Question ${field.name + 1}`}
+                key={field.key}
+                extra={
+                  <CloseOutlined
+                    onClick={() => {
+                      remove(field.name);
+                    }}
+                  />
+                }
+              >
+                <Form.Item
+                  label="Type"
+                  name={[field.name, "type"]}
+                  initialValue={selectedType}
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 10 }}
+                >
+                  <Input disabled />
+                </Form.Item>
+                {renderQuestionComponent(
+                  form.getFieldValue(["items", field.name, "type"]),
+                  field.name.toString()
+                )}
+              </Card>
+            ))}
+
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Segmented
+                options={["Multiple Choice", "True/False", "Fill In Blank"]}
+                value={selectedType}
+                onChange={(value) => setSelectedType(value as string)}
+              />
+              <Button
+                type="dashed"
+                onClick={() => add({ type: selectedType, name: "", list: [] })}
+                block
+              >
+                + Add Item
+              </Button>
+            </div>
+          </div>
+        )}
+      </Form.List>
+    </Form>
   );
 }

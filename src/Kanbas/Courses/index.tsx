@@ -8,9 +8,6 @@ import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import Quizzes from "./Quizzes";
 import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
-import MultipleChoice from "./Quizzes/MultipleChoice";
-import TrueFalse from "./Quizzes/TrueFalse";
-import FillInBlank from "./Quizzes/FillInBlank";
 
 const Courses = ({ courses }: { courses: any[] }) => {
   const { cid } = useParams();
@@ -41,15 +38,6 @@ const Courses = ({ courses }: { courses: any[] }) => {
             />
             <Route path="/Quizzes" element={<Quizzes />} />
             <Route path="Quizzes/NewQuiz" element={<QuizDetailsEditor />} />
-            <Route
-              path="Quizzes/NewQuiz/NewTrueFalseQ"
-              element={<TrueFalse />}
-            />
-            <Route path="Quizzes/NewQuiz/NewMCQ" element={<MultipleChoice />} />
-            <Route
-              path="Quizzes/NewQuiz/NewFillInBlankQ"
-              element={<FillInBlank />}
-            />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>
