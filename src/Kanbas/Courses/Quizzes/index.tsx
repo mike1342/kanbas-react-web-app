@@ -1,14 +1,19 @@
 import { useState } from "react";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsGripVertical, BsThreeDotsVertical } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { IoMdArrowDropdown } from "react-icons/io";
 import QuizzesControlButtons from "./QuizzesControlButtons";
+import { FaRocket } from "react-icons/fa";
+import { Quiz } from "../../../types";
+import { RootState } from "../../store";
+import QuizDetailsScreen from "./QuizDetailsScreen";
 
 export default function Quizzes() {
   const { cid } = useParams();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { quizzes } = useSelector((state: RootState) => state.quizzesReducer);
   const [menuVisible, setMenuVisible] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
 
@@ -22,6 +27,16 @@ export default function Quizzes() {
 
   const handlePublishToggle = () => {
     setIsPublished(!isPublished);
+  };
+
+  const dateFormat = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const formattedDate = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+    });
+    const formattedTime = "at 12:00am";
+    return `${formattedDate} ${formattedTime}`;
   };
 
   return (
@@ -87,6 +102,39 @@ export default function Quizzes() {
                 <span className="fw-bold">Assignment Quizzes</span>
                 {currentUser.role === "FACULTY" && <QuizzesControlButtons />}
               </div>
+              {quizzes && (
+                <ul id="wd-quiz-list" className="list-group rounded-0">
+                  {quizzes.map((quiz: Quiz) => (
+                    <li className="wd-quiz-list-item list-group-item p-3 ps-1 d-flex align-items-center">
+                      <BsGripVertical className="me-2 fs-3" />
+                      <FaRocket className="me-2 fs-3 text-success" />
+                      <div className="d-inline-block align-items-center">
+                        <a
+                          className="wd-quiz-link text-decoration-none text-dark fw-bold"
+                          href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
+                        >
+                          {quiz.title}
+                        </a>
+                        <p className="quiz-info fs-6 mb-0">
+                          <span className="text-danger">Multiple Modules</span>{" "}
+                          |<strong>Not available until</strong>{" "}
+                          {dateFormat(quiz.availableUntil.toString())} |
+                          <strong>Due</strong>{" "}
+                          {dateFormat(quiz.dueDate.toString())} |{quiz.points}{" "}
+                          pts
+                        </p>
+                      </div>
+                      <div className="d-flex flex-grow-1" />
+
+                      {currentUser.role === "FACULTY" && (
+                        <div className="quiz-item-control-btns">
+                          <QuizzesControlButtons />
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           </ul>
         </div>
