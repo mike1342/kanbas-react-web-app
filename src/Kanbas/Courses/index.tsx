@@ -8,7 +8,6 @@ import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
 import Quizzes from "./Quizzes";
 import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
-import Details from "./Quizzes/Details";
 
 const Courses = ({ courses }: { courses: any[] }) => {
   const { cid } = useParams();
