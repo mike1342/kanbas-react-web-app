@@ -10,9 +10,11 @@ const AccountNavigation: React.FC = () => {
   const classes = (path: string) => location.pathname === path ? "list-group-item active border border-0" : "list-group-item text-danger border border-0";
   return (
       <div id="wd-account-navigation" className="wd list-group fs-5 rounded-0">
-      {links.map((link) => (
-        <><Link to={`/Kanbas/Account/${link}`} className={classes(`/Kanbas/Account/${link}`)}> {link} </Link><br /></>
-      ))}
+        {links.map((link) => (
+          <><Link to={`/Kanbas/Account/${link}`} className={classes(`/Kanbas/Account/${link}`)}> {link} </Link><br /></>
+        ))}
+        {currentUser && currentUser.role === "ADMIN" && (
+        <Link to={`/Kanbas/Account/Users`} className={`${classes("/Kanbas/Account/Users")}`}> Users </Link> )}
       </div>
   );
 };
