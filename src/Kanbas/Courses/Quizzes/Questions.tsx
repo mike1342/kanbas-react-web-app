@@ -5,8 +5,15 @@ import { useState } from "react";
 import MultipleChoice from "./MultipleChoice";
 import TrueFalse from "./TrueFalse";
 import FillInBlank from "./FillInBlank";
+import { Question, Quiz } from "../../../types";
 
-export default function Questions() {
+export default function Questions({
+  quiz,
+  setQuiz,
+}: {
+  quiz: Quiz;
+  setQuiz: React.Dispatch<React.SetStateAction<Quiz>>;
+}) {
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState("Multiple Choice");
 
@@ -23,15 +30,20 @@ export default function Questions() {
     }
   };
 
+  const handleQuestionsChange = (updatedQuestions: Question[]) => {
+    // Update the questions in the parent quiz state
+    setQuiz((prev: Quiz) => ({ ...prev, questions: updatedQuestions }));
+  };
+
   return (
     <Form
-      labelCol={{ span: 6 }}
-      wrapperCol={{ span: 18 }}
       form={form}
       name="dynamic_form_complex"
-      style={{ maxWidth: 600 }}
-      autoComplete="off"
-      initialValues={{ items: [] }}
+      initialValues={{ items: quiz.questions || [] }}
+      onValuesChange={(allValues) => {
+        console.log(JSON.stringify(allValues));
+        //handleQuestionsChange(allValues.items);
+      }}
     >
       <Form.List name="items">
         {(fields, { add, remove }) => (
@@ -64,7 +76,6 @@ export default function Questions() {
                 )}
               </Card>
             ))}
-
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Segmented
                 options={["Multiple Choice", "True/False", "Fill In Blank"]}
@@ -73,7 +84,9 @@ export default function Questions() {
               />
               <Button
                 type="dashed"
-                onClick={() => add({ type: selectedType, name: "", list: [] })}
+                onClick={() => {
+                  add({ type: selectedType, name: "", list: [] });
+                }}
                 block
               >
                 + Add Item

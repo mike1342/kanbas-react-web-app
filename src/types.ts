@@ -38,7 +38,7 @@ export interface FillInQuestionAttempt extends QuestionAttempt, FillInQuestion {
 }
 
 export interface QuizAttempt {
-  _id: string;
+  _id?: string;
   quizId: string;
   studentId: string;
   score: number;
@@ -48,7 +48,7 @@ export interface QuizAttempt {
 }
 
 export interface Quiz {
-  _id: string;
+  _id?: string;
   title: string;
   quizType: QuizType;
   points: number;

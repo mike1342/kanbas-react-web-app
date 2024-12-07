@@ -11,25 +11,19 @@ import {
 } from "antd";
 import { useNavigate, useParams } from "react-router";
 import { Quiz, QuizType, AssignmentType } from "./../../../types";
-import { useState } from "react";
 
-export default function Details() {
+export default function Details({
+  quiz,
+  setQuiz,
+  handleSave,
+}: {
+  quiz: Quiz;
+  setQuiz: React.Dispatch<React.SetStateAction<Quiz>>;
+  handleSave: () => void;
+}) {
   const { TextArea } = Input;
   const navigate = useNavigate();
-  const { cid } = useParams<{ cid: string }>();
-
-  const [quiz, setQuiz] = useState<Partial<Quiz>>({
-    title: "Unnamed Quiz",
-    quizType: "gradedQuiz",
-    assignmentGroup: "quiz",
-    shuffleAnswers: true,
-    timeLimit: 20,
-    multipleAttempts: false,
-    showCorrectAnswers: false,
-    oneQuestionAtATime: true,
-    webcamRequired: false,
-    lockQuestionsAfterAnswering: false,
-  });
+  const { cid } = useParams();
 
   const handleInputChange = (field: keyof Quiz, value: any) => {
     setQuiz((prev) => ({ ...prev, [field]: value }));
@@ -205,7 +199,7 @@ export default function Details() {
       </Card>
       <hr />
       <div className="d-flex justify-content-end" style={{ gap: "0.5%" }}>
-        <Button color="danger" variant="solid">
+        <Button color="danger" onClick={handleSave} variant="solid">
           Save
         </Button>
         <Button
