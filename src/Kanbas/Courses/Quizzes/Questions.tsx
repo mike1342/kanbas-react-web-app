@@ -5,7 +5,13 @@ import { useState } from "react";
 import MultipleChoice from "./MultipleChoice";
 import TrueFalse from "./TrueFalse";
 import FillInBlank from "./FillInBlank";
-import { Question, Quiz } from "../../../types";
+import {
+  FillInQuestion,
+  MCQuestion,
+  Question,
+  Quiz,
+  TFQuestion,
+} from "../../../types";
 
 export default function Questions({
   quiz,
@@ -17,22 +23,65 @@ export default function Questions({
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState("Multiple Choice");
 
-  const renderQuestionComponent = (type: string, fieldName: string) => {
+  const renderQuestionComponent = (
+    type: string,
+    fieldName: string,
+    questionData: Question,
+    index: number
+  ) => {
+    if (!questionData) return null;
+
     switch (type) {
       case "Multiple Choice":
-        return <MultipleChoice formField={fieldName} />;
+        return (
+          <MultipleChoice
+            formField={fieldName}
+            questionData={questionData as MCQuestion}
+            index={index}
+            setQuiz={setQuiz}
+          />
+        );
       case "True/False":
-        return <TrueFalse formField={fieldName} />;
+        return (
+          <TrueFalse
+            formField={fieldName}
+            questionData={questionData as TFQuestion}
+            index={index}
+            setQuiz={setQuiz}
+          />
+        );
       case "Fill In Blank":
-        return <FillInBlank formField={fieldName} />;
+        return (
+          <FillInBlank
+            formField={fieldName}
+            questionData={questionData as FillInQuestion}
+            index={index}
+            setQuiz={setQuiz}
+          />
+        );
       default:
         return null;
     }
   };
 
   const handleQuestionsChange = (updatedQuestions: Question[]) => {
-    // Update the questions in the parent quiz state
-    setQuiz((prev: Quiz) => ({ ...prev, questions: updatedQuestions }));
+    setQuiz((prev: Quiz) => ({
+      ...prev,
+      questions: updatedQuestions.map((q) => {
+        // Clean up the question object to ensure it matches the expected structure
+        if (q.questionType === "MC") {
+          const { choices, correctAnswer, ...rest } = q as MCQuestion;
+          return { ...rest, choices, correctAnswer };
+        } else if (q.questionType === "TF") {
+          const { correctAnswer, ...rest } = q as TFQuestion;
+          return { ...rest, correctAnswer };
+        } else if (q.questionType === "FillIn") {
+          const { correctAnswers, ...rest } = q as FillInQuestion;
+          return { ...rest, correctAnswers };
+        }
+        return q;
+      }),
+    }));
   };
 
   return (
@@ -40,15 +89,20 @@ export default function Questions({
       form={form}
       name="dynamic_form_complex"
       initialValues={{ items: quiz.questions || [] }}
-      onValuesChange={(allValues) => {
-        console.log(JSON.stringify(allValues));
-        //handleQuestionsChange(allValues.items);
+      onValuesChange={(_changedValues, allValues) => {
+        const updatedQuestions = allValues.items.map(
+          (item: Question, index: number) => ({
+            ...quiz.questions[index],
+            ...item,
+          })
+        );
+        handleQuestionsChange(updatedQuestions);
       }}
     >
       <Form.List name="items">
-        {(fields, { add, remove }) => (
+        {(fields, { remove }) => (
           <div style={{ display: "flex", rowGap: 16, flexDirection: "column" }}>
-            {fields.map((field) => (
+            {fields.map((field, index) => (
               <Card
                 size="small"
                 title={`Question ${field.name + 1}`}
@@ -71,8 +125,10 @@ export default function Questions({
                   <Input disabled />
                 </Form.Item>
                 {renderQuestionComponent(
-                  form.getFieldValue(["items", field.name, "type"]),
-                  field.name.toString()
+                  form.getFieldValue(["items", field.name, "type"]), // type
+                  field.name.toString(),
+                  quiz.questions[index],
+                  index
                 )}
               </Card>
             ))}
@@ -85,7 +141,49 @@ export default function Questions({
               <Button
                 type="dashed"
                 onClick={() => {
-                  add({ type: selectedType, name: "", list: [] });
+                  let newQuestion: Question;
+
+                  if (selectedType === "Multiple Choice") {
+                    newQuestion = {
+                      _id: "",
+                      title: `Question ${quiz.questions.length + 1}`,
+                      question: "",
+                      points: 0,
+                      questionType: "MC",
+                      choices: [""],
+                      correctAnswer: "",
+                    } as MCQuestion;
+                  } else if (selectedType === "True/False") {
+                    newQuestion = {
+                      _id: "",
+                      title: `Question ${quiz.questions.length + 1}`,
+                      question: "",
+                      points: 0,
+                      questionType: "TF",
+                      correctAnswer: false,
+                    } as TFQuestion;
+                  } else if (selectedType === "Fill In Blank") {
+                    newQuestion = {
+                      _id: "",
+                      title: `Question ${quiz.questions.length + 1}`,
+                      question: "",
+                      points: 0,
+                      questionType: "FillIn",
+                      correctAnswers: [""],
+                    } as FillInQuestion;
+                  }
+
+                  setQuiz((prevQuiz) => ({
+                    ...prevQuiz,
+                    questions: [...prevQuiz.questions, newQuestion],
+                  }));
+
+                  form.setFieldsValue({
+                    items: [
+                      ...form.getFieldValue("items"),
+                      { type: selectedType },
+                    ],
+                  });
                 }}
                 block
               >

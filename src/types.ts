@@ -68,5 +68,5 @@ export interface Quiz {
   questions: Question[];
   quizAttempts: QuizAttempt[];
   description: string
-  isPublish: boolean;
+  isPublished: boolean;
 };

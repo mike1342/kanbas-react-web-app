@@ -4,7 +4,7 @@ import Details from "./Details";
 import Questions from "./Questions";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useState } from "react";
-import { Quiz, QuizAttempt } from "../../../types";
+import { Quiz } from "../../../types";
 import * as quizClient from "./client";
 
 export default function QuizDetailsEditor() {
@@ -24,7 +24,7 @@ export default function QuizDetailsEditor() {
     availableUntil: new Date(), // Add the missing properties
     quizAttempts: [], // Add the missing properties
     description: "", // Add the missing properties
-    isPublish: false, // Add the missing properties
+    isPublished: false, // Add the missing properties
     title: "Unnamed Quiz",
     quizType: "gradedQuiz",
     assignmentGroup: "quiz",
@@ -38,7 +38,7 @@ export default function QuizDetailsEditor() {
     questions: [], // Questions will be stored here
   });
 
-  const handleSave = async () => {
+  const handleSave = async (publish: boolean) => {
     try {
       if (!quiz.title || !quiz.description || !quiz.dueDate) {
         message.error("Please fill in all required fields in Details.");
@@ -49,8 +49,16 @@ export default function QuizDetailsEditor() {
         message.error("Please add at least one question in Questions.");
         return;
       }
+      let totalPoints = 0;
+      for (const question of quiz.questions) {
+        totalPoints += question.points;
+      }
 
-      const savedQuiz = await quizClient.addQuiz(quiz as Quiz);
+      const savedQuiz = await quizClient.addQuiz({
+        ...quiz,
+        isPublished: publish,
+        points: totalPoints,
+      });
 
       if (savedQuiz) {
         message.success("Quiz saved successfully!");

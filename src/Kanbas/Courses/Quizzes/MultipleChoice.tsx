@@ -1,93 +1,113 @@
-import { useState } from "react";
 import { Button, Form, Input, Space, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { FaTrash } from "react-icons/fa";
-import { MCQuestion } from "./../../../types";
+import { MCQuestion, Question, Quiz } from "./../../../types";
 
-export default function MultipleChoice({ formField }: { formField: string }) {
-  const [question, setQuestion] = useState<MCQuestion>({
-    _id: "",
-    title: "",
-    question: "",
-    points: 0,
-    questionType: "MC",
-    choices: [""],
-    correctAnswer: "",
-  });
+export default function MultipleChoice({
+  formField,
+  questionData,
+  index,
+  setQuiz,
+}: {
+  formField: string;
+  questionData: MCQuestion;
+  index: number;
+  setQuiz: React.Dispatch<React.SetStateAction<Quiz>>;
+}) {
+  const handleInputChange = (
+    field: keyof MCQuestion | keyof Question,
+    value: string | number
+  ) => {
+    setQuiz((prevQuiz) => {
+      const updatedQuestions = [...prevQuiz.questions];
 
-  const handleAddChoice = () => {
-    setQuestion((prevQuestion) => ({
-      ...prevQuestion,
-      choices: [...prevQuestion.choices, ""],
-    }));
-  };
+      if (field in updatedQuestions[index]) {
+        updatedQuestions[index] = {
+          ...updatedQuestions[index],
+          [field]: value,
+        } as Question;
+      }
 
-  const handleRemoveChoice = (index: number) => {
-    const updatedChoices = question.choices.filter((_, i) => i !== index);
-    setQuestion({
-      ...question,
-      choices: updatedChoices,
-      correctAnswer:
-        question.correctAnswer === question.choices[index]
-          ? ""
-          : question.correctAnswer,
+      return { ...prevQuiz, questions: updatedQuestions };
     });
   };
 
-  const handleChoiceChange = (index: number, value: string) => {
-    const updatedChoices = [...question.choices];
-    updatedChoices[index] = value;
-    setQuestion({ ...question, choices: updatedChoices });
+  const handleChoiceChange = (choiceIndex: number, value: string) => {
+    setQuiz((prevQuiz) => {
+      const updatedQuestions = [...prevQuiz.questions];
+
+      if (updatedQuestions[index].questionType === "MC") {
+        const question = updatedQuestions[index] as MCQuestion;
+        const updatedChoices = [...question.choices];
+        updatedChoices[choiceIndex] = value;
+
+        updatedQuestions[index] = {
+          ...question,
+          choices: updatedChoices,
+        } as MCQuestion;
+      }
+
+      return { ...prevQuiz, questions: updatedQuestions };
+    });
   };
 
-  const handleMarkCorrect = (choice: string) => {
-    setQuestion((prevQuestion) => ({
-      ...prevQuestion,
-      correctAnswer: prevQuestion.correctAnswer === choice ? "" : choice,
-    }));
+  const handleAddChoice = () => {
+    setQuiz((prevQuiz) => {
+      const updatedQuestions = [...prevQuiz.questions];
+      const question = updatedQuestions[index] as MCQuestion;
+      question.choices.push("");
+      updatedQuestions[index] = question;
+      return { ...prevQuiz, questions: updatedQuestions };
+    });
+  };
+
+  const handleRemoveChoice = (choiceIndex: number) => {
+    setQuiz((prevQuiz) => {
+      const updatedQuestions = [...prevQuiz.questions];
+      const question = updatedQuestions[index] as MCQuestion;
+      question.choices = question.choices.filter((_, i) => i !== choiceIndex);
+      updatedQuestions[index] = question;
+      return { ...prevQuiz, questions: updatedQuestions };
+    });
   };
 
   return (
     <div className="quiz-mc-question">
       <Form
-        name="layout-multiple-horizontal"
         layout="horizontal"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 10 }}
       >
-        <Form.Item label="Points:" wrapperCol={{ span: 4 }}>
+        <Form.Item
+          label="Points:"
+          name={[formField, "points"]}
+          initialValue={questionData.points}
+        >
           <Input
             type="number"
-            value={question.points}
+            value={questionData.points}
             onChange={(e) =>
-              setQuestion((prevQuestion) => ({
-                ...prevQuestion,
-                points: Number(e.target.value),
-              }))
+              handleInputChange("points", Number(e.target.value))
             }
           />
         </Form.Item>
         <Form.Item
-          wrapperCol={{ span: 50 }}
-          name={[formField, "question"]}
           label="Question"
+          name={[formField, "question"]}
+          initialValue={questionData.question}
         >
           <TextArea
             rows={4}
-            value={question.question}
-            onChange={(e) =>
-              setQuestion({ ...question, question: e.target.value })
-            }
+            value={questionData.question}
+            onChange={(e) => handleInputChange("question", e.target.value)}
           />
         </Form.Item>
-
         <hr />
         <Form.Item label="Answers:" wrapperCol={{ span: 16 }}>
-          {question.choices.map((choice, index) => (
+          {questionData.choices.map((choice, index) => (
             <Space
               key={index}
+              align="baseline"
               style={{ display: "flex", marginBottom: 8 }}
-              align="center"
             >
               <Input
                 placeholder={`Possible Answer ${index + 1}`}
@@ -95,17 +115,17 @@ export default function MultipleChoice({ formField }: { formField: string }) {
                 onChange={(e) => handleChoiceChange(index, e.target.value)}
               />
               <Switch
-                checked={question.correctAnswer === choice}
-                onChange={() => handleMarkCorrect(choice)}
+                checked={questionData.correctAnswer === choice}
+                onChange={() => handleInputChange("correctAnswer", choice)}
                 checkedChildren="Correct"
                 unCheckedChildren="Not Correct"
               />
               <Button
                 danger
                 onClick={() => handleRemoveChoice(index)}
-                disabled={question.choices.length <= 1}
+                disabled={questionData.choices.length <= 1}
               >
-                <FaTrash />
+                Remove
               </Button>
             </Space>
           ))}

@@ -1,79 +1,86 @@
 import { Form, Input, Switch } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useState } from "react";
-import { TFQuestion } from "./../../../types";
-export default function TrueFalse({ formField }: { formField: string }) {
-  const [question, setQuestion] = useState<TFQuestion>({
-    _id: "",
-    title: "",
-    question: "",
-    points: 0,
-    questionType: "TF",
-    correctAnswer: false,
-  });
+import { TFQuestion, Quiz } from "../../../types";
 
-  const handleTrueChange = (checked: boolean) => {
-    setQuestion((prevQuestion) => ({
-      ...prevQuestion,
-      correctAnswer: checked,
-    }));
+export default function TrueFalse({
+  formField,
+  questionData,
+  index,
+  setQuiz,
+}: {
+  formField: string;
+  questionData: TFQuestion;
+  index: number;
+  setQuiz: React.Dispatch<React.SetStateAction<Quiz>>;
+}) {
+  const handleInputChange = (
+    field: keyof TFQuestion,
+    value: string | number | boolean
+  ) => {
+    setQuiz((prevQuiz) => {
+      const updatedQuestions = [...prevQuiz.questions];
+      updatedQuestions[index] = {
+        ...updatedQuestions[index],
+        [field]: value,
+      } as TFQuestion;
+      return { ...prevQuiz, questions: updatedQuestions };
+    });
   };
 
-  const handleFalseChange = (checked: boolean) => {
-    if (checked) {
-      setQuestion((prevQuestion) => ({
-        ...prevQuestion,
-        correctAnswer: false,
-      }));
-    }
+  const handleCorrectAnswerChange = (isTrue: boolean) => {
+    setQuiz((prevQuiz) => {
+      const updatedQuestions = [...prevQuiz.questions];
+      updatedQuestions[index] = {
+        ...updatedQuestions[index],
+        correctAnswer: isTrue,
+      } as TFQuestion;
+      return { ...prevQuiz, questions: updatedQuestions };
+    });
   };
 
   return (
     <div className="quiz-true-false-question">
       <Form
-        name="layout-multiple-horizontal"
         layout="horizontal"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 10 }}
       >
-        <Form.Item label="Points:" wrapperCol={{ span: 4 }}>
+        <Form.Item
+          label="Points:"
+          name={[formField, "points"]}
+          initialValue={questionData.points}
+        >
           <Input
             type="number"
-            value={question.points}
+            value={questionData.points}
             onChange={(e) =>
-              setQuestion((prevQuestion) => ({
-                ...prevQuestion,
-                points: Number(e.target.value),
-              }))
+              handleInputChange("points", Number(e.target.value))
             }
           />
         </Form.Item>
         <Form.Item
-          wrapperCol={{ span: 50 }}
-          name={[formField, "question"]}
           label="Question"
+          name={[formField, "question"]}
+          initialValue={questionData.question}
         >
           <TextArea
             rows={4}
-            value={question.question}
-            onChange={(e) =>
-              setQuestion({ ...question, question: e.target.value })
-            }
+            value={questionData.question}
+            onChange={(e) => handleInputChange("question", e.target.value)}
           />
         </Form.Item>
-
         <hr />
 
-        <Form.Item label="True" valuePropName="checked">
+        <Form.Item label="True">
           <Switch
-            checked={question.correctAnswer === true}
-            onChange={handleTrueChange}
+            checked={questionData.correctAnswer === true}
+            onChange={() => handleCorrectAnswerChange(true)}
           />
         </Form.Item>
-        <Form.Item label="False" valuePropName="checked">
+        <Form.Item label="False">
           <Switch
-            checked={question.correctAnswer === false}
-            onChange={handleFalseChange}
+            checked={questionData.correctAnswer === false}
+            onChange={() => handleCorrectAnswerChange(false)}
           />
         </Form.Item>
       </Form>

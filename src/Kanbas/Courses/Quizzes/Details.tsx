@@ -19,7 +19,7 @@ export default function Details({
 }: {
   quiz: Quiz;
   setQuiz: React.Dispatch<React.SetStateAction<Quiz>>;
-  handleSave: () => void;
+  handleSave: (publish: boolean) => void;
 }) {
   const { TextArea } = Input;
   const navigate = useNavigate();
@@ -199,12 +199,17 @@ export default function Details({
       </Card>
       <hr />
       <div className="d-flex justify-content-end" style={{ gap: "0.5%" }}>
-        <Button color="danger" onClick={handleSave} variant="solid">
+        <Button
+          color="danger"
+          onClick={() => handleSave(false)}
+          variant="solid"
+        >
           Save
         </Button>
         <Button
           variant="solid"
           style={{ background: "#4CAF50", color: "white" }}
+          onClick={() => handleSave(true)}
         >
           Save & Publish
         </Button>
