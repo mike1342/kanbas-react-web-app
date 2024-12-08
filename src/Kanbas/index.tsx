@@ -16,21 +16,13 @@ const Kanbas: React.FC = () => {
     const [courses, setCourses] = useState<any[]>([]);
     const [allCourses, setAllCourses] = useState<any[]>([]);
     const [course, setCourse] = useState<any>({
-        _id: "1234", name: "New Course", number: "New Number",
+        name: "New Course", number: "New Number",
         startDate: "2023-09-10", endDate: "2023-12-15", description: "New Description",
     });
 
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const { enrollments } = useSelector((state: any) => state.enrollmentsReducer);
 
-    const fetchCourses = async () => {
-        try {
-            const courses = await userClient.findMyCourses();
-            setCourses(courses);
-        } catch (error) {
-            console.error(error);
-        }
-    };
     const fetchAllCourses = async () => {
         try {
             const allCourses = await courseClient.fetchAllCourses();
@@ -41,6 +33,14 @@ const Kanbas: React.FC = () => {
     };
 
     useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const courses = await userClient.findCoursesForUser(currentUser._id);
+                setCourses(courses);
+            } catch (error) {
+                console.error(error);
+            }
+        };
         fetchCourses();
     }, [currentUser, enrollments]);
 
@@ -49,7 +49,7 @@ const Kanbas: React.FC = () => {
     }, []);
 
     const addNewCourse = async () => {
-        const newCourse = await userClient.createCourse(course);
+        const newCourse = await courseClient.createCourse(course);
         setCourses([ ...courses, newCourse ]);
     };
     
