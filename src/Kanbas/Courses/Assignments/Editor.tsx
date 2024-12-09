@@ -31,7 +31,7 @@ const AssignmentsEditor: React.FC = () => {
     if (!cid) return;
     if (addingAssignment) {
       const newAssignment = {...assignment, course: cid};
-      const assignmentFromDb = await coursesClient.createModuleForCourse(cid, newAssignment);
+      const assignmentFromDb = await coursesClient.createAssignmentForCourse(cid, newAssignment);
       dispatch(addAssignment(assignmentFromDb));
     } else {
       await assignmentsClient.updateAssignment(assignment);
