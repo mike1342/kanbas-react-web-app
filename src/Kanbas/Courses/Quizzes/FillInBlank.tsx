@@ -50,6 +50,7 @@ export default function FillInBlank({
       >
         <Form.Item label="Points:" name={[formField, "points"]}>
           <Input
+            defaultValue={questionData.points}
             type="number"
             value={questionData.points}
             onChange={(e) =>
@@ -70,6 +71,7 @@ export default function FillInBlank({
           initialValue={questionData.question}
         >
           <TextArea
+            defaultValue={questionData.question}
             rows={4}
             value={questionData.question}
             onChange={(e) =>
@@ -90,6 +92,7 @@ export default function FillInBlank({
             <Row key={answerIndex} gutter={8} style={{ marginBottom: "8px" }}>
               <Col span={20}>
                 <Input
+                  defaultValue={answer}
                   placeholder={`Answer ${answerIndex + 1}`}
                   value={answer}
                   onChange={(e) =>

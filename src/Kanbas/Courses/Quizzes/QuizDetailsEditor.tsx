@@ -3,7 +3,7 @@ import type { TabsProps } from "antd";
 import Details from "./Details";
 import Questions from "./Questions";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Quiz } from "../../../types";
 import * as quizClient from "./client";
 
@@ -16,27 +16,21 @@ export default function QuizDetailsEditor() {
     console.log(key);
   };
 
-  const [quiz, setQuiz] = useState<Quiz>({
-    points: 0,
-    howManyAttempts: 1,
-    dueDate: new Date(),
-    availableFrom: new Date(), // Add the missing properties
-    availableUntil: new Date(), // Add the missing properties
-    quizAttempts: [], // Add the missing properties
-    description: "", // Add the missing properties
-    isPublished: false, // Add the missing properties
-    title: "Unnamed Quiz",
-    quizType: "gradedQuiz",
-    assignmentGroup: "quiz",
-    shuffleAnswers: true,
-    timeLimit: 20,
-    multipleAttempts: false,
-    showCorrectAnswers: false,
-    oneQuestionAtATime: true,
-    webcamRequired: false,
-    lockQuestionsAfterAnswering: false,
-    questions: [], // Questions will be stored here
-  });
+  const [quiz, setQuiz] = useState<Quiz>();
+  const { qid } = useParams();
+
+  useEffect(() => {
+    // Fetch quiz details
+    const fetchQuiz = async () => {
+      const quiz = await quizClient.getQuizById(qid as string);
+      console.log(quiz);
+      setQuiz(quiz);
+    };
+
+    fetchQuiz();
+  }, [qid]);
+
+  if (!quiz) return <div>Loading...</div>;
 
   const handleSave = async (publish: boolean) => {
     try {
@@ -58,11 +52,12 @@ export default function QuizDetailsEditor() {
         ...quiz,
         isPublished: publish,
         points: totalPoints,
+        cid: cid as string,
       });
 
       if (savedQuiz) {
         message.success("Quiz saved successfully!");
-        navigate("/Kanbas/Courses");
+        navigate(`/Kanbas/Courses/${cid}/Quizzes`);
       } else {
         message.error("Failed to save quiz.");
       }
@@ -76,13 +71,13 @@ export default function QuizDetailsEditor() {
       key: "1",
       label: "Details",
       children: (
-        <Details quiz={quiz} setQuiz={setQuiz} handleSave={handleSave} />
+        <Details quiz={quiz} setQuiz={setQuiz as React.Dispatch<SetStateAction<Quiz>>} handleSave={handleSave} />
       ),
     },
     {
       key: "2",
       label: "Questions",
-      children: <Questions quiz={quiz} setQuiz={setQuiz} />,
+      children: <Questions quiz={quiz} setQuiz={setQuiz as React.Dispatch<SetStateAction<Quiz>>} />,
     },
   ];
   return (

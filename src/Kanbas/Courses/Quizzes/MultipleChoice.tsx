@@ -83,6 +83,7 @@ export default function MultipleChoice({
           initialValue={questionData.points}
         >
           <Input
+            defaultValue={questionData.points}
             type="number"
             value={questionData.points}
             onChange={(e) =>
@@ -96,6 +97,7 @@ export default function MultipleChoice({
           initialValue={questionData.question}
         >
           <TextArea
+            defaultValue={questionData.question}
             rows={4}
             value={questionData.question}
             onChange={(e) => handleInputChange("question", e.target.value)}
@@ -110,11 +112,13 @@ export default function MultipleChoice({
               style={{ display: "flex", marginBottom: 8 }}
             >
               <Input
+                defaultValue={choice}
                 placeholder={`Possible Answer ${index + 1}`}
                 value={choice}
                 onChange={(e) => handleChoiceChange(index, e.target.value)}
               />
               <Switch
+                defaultChecked={questionData.correctAnswer === choice}
                 checked={questionData.correctAnswer === choice}
                 onChange={() => handleInputChange("correctAnswer", choice)}
                 checkedChildren="Correct"

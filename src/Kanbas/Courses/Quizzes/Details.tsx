@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { useNavigate, useParams } from "react-router";
 import { Quiz, QuizType, AssignmentType } from "./../../../types";
+import dayjs from "dayjs";
 
 export default function Details({
   quiz,
@@ -48,6 +49,7 @@ export default function Details({
       <h6>Quiz Instructions:</h6>
       <Form.Item className="instructions">
         <TextArea
+          defaultValue={quiz.description}
           rows={4}
           onChange={(e) => handleInputChange("description", e.target.value)}
         />
@@ -106,6 +108,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Multiple Answers" valuePropName="checked">
                 <Switch
+                  defaultChecked={quiz.multipleAttempts}
                   onChange={(checked) =>
                     handleInputChange("multipleAttempts", checked)
                   }
@@ -124,6 +127,7 @@ export default function Details({
                 valuePropName="checked"
               >
                 <Switch
+                  defaultChecked={quiz.lockQuestionsAfterAnswering}
                   onChange={(checked) =>
                     handleInputChange("lockQuestionsAfterAnswering", checked)
                   }
@@ -133,6 +137,7 @@ export default function Details({
             <Col span={12}>
               <Form.Item label="Show Correct Answers" valuePropName="checked">
                 <Switch
+                  defaultChecked={quiz.showCorrectAnswers}
                   onChange={(checked) =>
                     handleInputChange("showCorrectAnswers", checked)
                   }
@@ -151,6 +156,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Access Code" wrapperCol={{ span: 4 }}>
                 <Input
+                  defaultValue={quiz.accessCode}
                   onChange={(e) =>
                     handleInputChange("accessCode", e.target.value)
                   }
@@ -158,6 +164,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Webcam Required" valuePropName="checked">
                 <Switch
+                  defaultChecked={quiz.webcamRequired}
                   onChange={(checked) =>
                     handleInputChange("webcamRequired", checked)
                   }
@@ -174,6 +181,7 @@ export default function Details({
       >
         <Form.Item label="Due" name="DueDate">
           <DatePicker
+            defaultValue={dayjs(quiz.dueDate)}
             style={{ width: "100%" }}
             onChange={(date) => handleInputChange("dueDate", date)}
           />
@@ -182,6 +190,7 @@ export default function Details({
           <Col span={12}>
             <Form.Item label="Available From" name="AvailableFromDate">
               <DatePicker
+                defaultValue={dayjs(quiz.availableFrom)}
                 style={{ width: "100%" }}
                 onChange={(date) => handleInputChange("availableFrom", date)}
               />
@@ -190,6 +199,7 @@ export default function Details({
           <Col span={12}>
             <Form.Item label="Until" name="AvailableUntilDate">
               <DatePicker
+                defaultValue={dayjs(quiz.availableUntil)}
                 style={{ width: "100%" }}
                 onChange={(date) => handleInputChange("availableUntil", date)}
               />

@@ -69,4 +69,5 @@ export interface Quiz {
   quizAttempts: QuizAttempt[];
   description: string
   isPublished: boolean;
+  cid: string;
 };

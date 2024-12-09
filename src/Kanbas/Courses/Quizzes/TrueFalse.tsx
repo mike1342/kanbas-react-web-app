@@ -51,6 +51,7 @@ export default function TrueFalse({
           initialValue={questionData.points}
         >
           <Input
+            defaultValue={questionData.points}
             type="number"
             value={questionData.points}
             onChange={(e) =>
@@ -64,6 +65,7 @@ export default function TrueFalse({
           initialValue={questionData.question}
         >
           <TextArea
+            defaultValue={questionData.question}
             rows={4}
             value={questionData.question}
             onChange={(e) => handleInputChange("question", e.target.value)}
@@ -73,12 +75,14 @@ export default function TrueFalse({
 
         <Form.Item label="True">
           <Switch
+            defaultChecked={questionData.correctAnswer}
             checked={questionData.correctAnswer === true}
             onChange={() => handleCorrectAnswerChange(true)}
           />
         </Form.Item>
         <Form.Item label="False">
           <Switch
+            defaultChecked={!questionData.correctAnswer}
             checked={questionData.correctAnswer === false}
             onChange={() => handleCorrectAnswerChange(false)}
           />

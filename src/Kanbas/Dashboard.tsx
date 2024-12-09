@@ -73,7 +73,7 @@ const Dashboard = ({ courses, userCourses, course, setCourse, addNewCourse,
         <div className="row row-cols-1 row-cols-md-5 g-4">
           {(showAllCourses ? courses : userCourses)
           .map((course) => {
-            let enrollment = null;
+            let enrollment: any = null;
             if (Array.isArray(enrollments)) {
               enrollment = enrollments.find((enrollment: any) => checkEnrollment(enrollment, course));
             }

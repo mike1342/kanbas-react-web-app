@@ -1,20 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsGripVertical, BsThreeDotsVertical } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { IoMdArrowDropdown } from "react-icons/io";
 import QuizzesControlButtons from "./QuizzesControlButtons";
 import { FaRocket } from "react-icons/fa";
-import { FillInQuestion, MCQuestion, Quiz, TFQuestion } from "../../../types";
+import { Quiz } from "../../../types";
 import { RootState } from "../../store";
+import * as coursesClient from "../client";
+import { setQuizzes } from "./reducer";
 
 export default function Quizzes() {
   const { cid } = useParams();
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { quizzes } = useSelector((state: RootState) => state.quizzesReducer);
   const [menuVisible, setMenuVisible] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+
+  const fetchQuizzes = async () => {
+    const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
+    dispatch(setQuizzes(quizzes));
+  };
+  useEffect(() => {
+    fetchQuizzes();
+  }, []);
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -133,7 +144,7 @@ export default function Quizzes() {
                         <div className="d-inline-block align-items-center">
                           <a
                             className="wd-quiz-link text-decoration-none text-dark fw-bold"
-                            href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
+                            href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/QuizDetailsScreen`}
                           >
                             {quiz.title}
                           </a>

@@ -1,26 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Quiz } from "./../../../types";
 import { Button, Col, Row, Space } from "antd";
 import React from "react";
 import { FaPencil } from "react-icons/fa6";
+import { useParams } from "react-router";
+import { getQuizById } from "./client";
 
 const QuizDetailsScreen = () => {
-  const [quiz] = useState<Partial<Quiz>>({
-    title: "Unnamed Quiz",
-    points: 0,
-    quizType: "gradedQuiz",
-    assignmentGroup: "quiz",
-    shuffleAnswers: false,
-    timeLimit: 20,
-    multipleAttempts: false,
-    showCorrectAnswers: true,
-    oneQuestionAtATime: true,
-    webcamRequired: false,
-    lockQuestionsAfterAnswering: false,
-    dueDate: new Date("2024-12-31T23:59:00"),
-    availableFrom: new Date("2024-12-01T08:00:00"),
-    availableUntil: new Date("2024-12-31T23:59:00"),
-  });
+  const [quiz, setQuiz] = useState<Quiz>();
+  const { cid, qid } = useParams();
+
+  useEffect(() => {
+    // Fetch quiz details
+    const fetchQuiz = async () => {
+      const quiz = await getQuizById(qid as string);
+      setQuiz(quiz);
+    };
+
+    fetchQuiz();
+  }, [qid]);
+
+  if (!quiz) return <div>Loading...</div>;
 
   const fields = [
     { label: "Quiz Type", value: quiz.quizType },
@@ -50,7 +50,11 @@ const QuizDetailsScreen = () => {
         <Space size="small">
           <Button>Preview</Button>
           <Button>
-            <FaPencil />
+            <a
+              href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizDetailsEditor`}
+            >
+              <FaPencil />
+            </a>
             Edit
           </Button>
         </Space>

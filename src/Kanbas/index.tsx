@@ -41,7 +41,7 @@ const Kanbas: React.FC = () => {
                 console.error(error);
             }
         };
-        fetchCourses();
+        if (currentUser) fetchCourses();
     }, [currentUser, enrollments]);
 
     useEffect(() => {

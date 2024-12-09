@@ -1,7 +1,7 @@
 import { Button, Card, Form, Input } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import { Segmented } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MultipleChoice from "./MultipleChoice";
 import TrueFalse from "./TrueFalse";
 import FillInBlank from "./FillInBlank";
@@ -22,6 +22,22 @@ export default function Questions({
 }) {
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState("Multiple Choice");
+
+  // Update form values when quiz questions change
+  useEffect(() => {
+    if (quiz?.questions) {
+      form.setFieldsValue({
+        items: quiz.questions.map((question) => ({
+          ...question,
+          type: question.questionType === "MC" 
+            ? "Multiple Choice" 
+            : question.questionType === "TF"
+            ? "True/False"
+            : "Fill In Blank",
+        })),
+      });
+    }
+  }, [quiz.questions, form]);
 
   const renderQuestionComponent = (
     type: string,
@@ -104,6 +120,7 @@ export default function Questions({
           <div style={{ display: "flex", rowGap: 16, flexDirection: "column" }}>
             {fields.map((field, index) => (
               <Card
+                defaultValue={selectedType}
                 size="small"
                 title={`Question ${field.name + 1}`}
                 key={field.key}
@@ -134,6 +151,7 @@ export default function Questions({
             ))}
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Segmented
+                defaultValue="Multiple Choice"
                 options={["Multiple Choice", "True/False", "Fill In Blank"]}
                 value={selectedType}
                 onChange={(value) => setSelectedType(value as string)}

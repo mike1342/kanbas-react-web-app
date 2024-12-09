@@ -7,3 +7,8 @@ export const addQuiz = async(quiz: Quiz) => {
     const { data } = await axiosWithCredentials.post(`${REMOTE_SERVER}/addQuiz`, quiz);
     return data;
 }
+
+export const getQuizById = async (id: string) => {
+    const { data } = await axiosWithCredentials.get(`${REMOTE_SERVER}/getQuizById/${id}`);
+    return data;
+}
