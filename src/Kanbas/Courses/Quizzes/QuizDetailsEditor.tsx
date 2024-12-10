@@ -17,17 +17,17 @@ export default function QuizDetailsEditor() {
   };
 
   const [quiz, setQuiz] = useState<Quiz>({
-    title: "",
+    title: "Unnamed Quiz",
     quizType: "gradedQuiz",
     points: 0,
     assignmentGroup: "quiz",
-    shuffleAnswers: false,
-    timeLimit: 0,
+    shuffleAnswers: true,
+    timeLimit: 20,
     multipleAttempts: false,
     howManyAttempts: 0,
     showCorrectAnswers: false,
     accessCode: "",
-    oneQuestionAtATime: false,
+    oneQuestionAtATime: true,
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: new Date(),

@@ -154,10 +154,11 @@ export default function Quizzes() {
                             {quiz.title}
                           </a>
                           <p className="quiz-info fs-6 mb-0">
-                            <strong>Availability:</strong> {availabilityStatus}{" "}
-                            | <strong>Due:</strong>{" "}
+                            <strong>Availability: </strong> {availabilityStatus}{" "}
+                            | <strong>Due: </strong>
                             {dateFormat(quiz.dueDate.toString())} |{" "}
-                            <strong>Points:</strong> {quiz.points} |{" "}
+                            {quiz.points} pts |{" "}
+                            {quiz.questions.length} Questions
                           </p>
                         </div>
                         <div className="d-flex flex-grow-1" />

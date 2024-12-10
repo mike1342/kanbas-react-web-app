@@ -41,7 +41,7 @@ export default function Details({
       >
         <Form.Item>
           <Input
-            defaultValue={quiz.title}
+            value={quiz.title}
             onChange={(e) => handleInputChange("title", e.target.value)}
           />
         </Form.Item>
@@ -49,7 +49,7 @@ export default function Details({
       <h6>Quiz Instructions:</h6>
       <Form.Item className="instructions">
         <TextArea
-          defaultValue={quiz.description}
+          value={quiz.description}
           rows={4}
           onChange={(e) => handleInputChange("description", e.target.value)}
         />
@@ -60,7 +60,7 @@ export default function Details({
         wrapperCol={{ span: 6 }}
       >
         <Select
-          defaultValue={quiz.quizType}
+          value={quiz.quizType}
           onChange={(value: QuizType) => handleInputChange("quizType", value)}
         >
           <Select.Option value="gradedQuiz">Graded Quiz</Select.Option>
@@ -75,7 +75,7 @@ export default function Details({
         wrapperCol={{ span: 6 }}
       >
         <Select
-          defaultValue={quiz.assignmentGroup}
+          value={quiz.assignmentGroup}
           onChange={(value: AssignmentType) =>
             handleInputChange("assignmentGroup", value)
           }
@@ -92,7 +92,7 @@ export default function Details({
             <Col span={12}>
               <Form.Item label="Shuffle Answers" valuePropName="checked">
                 <Switch
-                  defaultChecked={quiz.shuffleAnswers}
+                  checked={quiz.shuffleAnswers}
                   onChange={(checked) =>
                     handleInputChange("shuffleAnswers", checked)
                   }
@@ -100,7 +100,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Time Limit" valuePropName="checked">
                 <Switch
-                  defaultChecked={!!quiz.timeLimit}
+                  checked={!!quiz.timeLimit}
                   onChange={(checked) =>
                     handleInputChange("timeLimit", checked ? 20 : 0)
                   }
@@ -108,7 +108,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Multiple Answers" valuePropName="checked">
                 <Switch
-                  defaultChecked={quiz.multipleAttempts}
+                  checked={quiz.multipleAttempts}
                   onChange={(checked) =>
                     handleInputChange("multipleAttempts", checked)
                   }
@@ -116,7 +116,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="One Question At A Time" valuePropName="checked">
                 <Switch
-                  defaultChecked={quiz.oneQuestionAtATime}
+                  checked={quiz.oneQuestionAtATime}
                   onChange={(checked) =>
                     handleInputChange("oneQuestionAtATime", checked)
                   }
@@ -127,7 +127,7 @@ export default function Details({
                 valuePropName="checked"
               >
                 <Switch
-                  defaultChecked={quiz.lockQuestionsAfterAnswering}
+                  checked={quiz.lockQuestionsAfterAnswering}
                   onChange={(checked) =>
                     handleInputChange("lockQuestionsAfterAnswering", checked)
                   }
@@ -137,7 +137,7 @@ export default function Details({
             <Col span={12}>
               <Form.Item label="Show Correct Answers" valuePropName="checked">
                 <Switch
-                  defaultChecked={quiz.showCorrectAnswers}
+                  checked={quiz.showCorrectAnswers}
                   onChange={(checked) =>
                     handleInputChange("showCorrectAnswers", checked)
                   }
@@ -145,7 +145,7 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Minutes:" wrapperCol={{ span: 2 }}>
                 <Input
-                  defaultValue={quiz.timeLimit}
+                  value={quiz.timeLimit}
                   onChange={(e) =>
                     handleInputChange(
                       "timeLimit",
@@ -156,15 +156,26 @@ export default function Details({
               </Form.Item>
               <Form.Item label="Access Code" wrapperCol={{ span: 4 }}>
                 <Input
-                  defaultValue={quiz.accessCode}
+                  value={quiz.accessCode}
                   onChange={(e) =>
                     handleInputChange("accessCode", e.target.value)
                   }
                 />
               </Form.Item>
+              <Form.Item label="How Many Attempts" wrapperCol={{ span: 2 }}>
+                <Input
+                  value={quiz.howManyAttempts}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "howManyAttempts",
+                      parseInt(e.target.value) || 0
+                    )
+                  }
+                />
+              </Form.Item>
               <Form.Item label="Webcam Required" valuePropName="checked">
                 <Switch
-                  defaultChecked={quiz.webcamRequired}
+                  checked={quiz.webcamRequired}
                   onChange={(checked) =>
                     handleInputChange("webcamRequired", checked)
                   }
@@ -181,7 +192,7 @@ export default function Details({
       >
         <Form.Item label="Due" name="DueDate">
           <DatePicker
-            defaultValue={dayjs(quiz.dueDate)}
+            value={dayjs(quiz.dueDate)}
             style={{ width: "100%" }}
             onChange={(date) => handleInputChange("dueDate", date)}
           />
@@ -190,7 +201,7 @@ export default function Details({
           <Col span={12}>
             <Form.Item label="Available From" name="AvailableFromDate">
               <DatePicker
-                defaultValue={dayjs(quiz.availableFrom)}
+                value={dayjs(quiz.availableFrom)}
                 style={{ width: "100%" }}
                 onChange={(date) => handleInputChange("availableFrom", date)}
               />
@@ -199,7 +210,7 @@ export default function Details({
           <Col span={12}>
             <Form.Item label="Until" name="AvailableUntilDate">
               <DatePicker
-                defaultValue={dayjs(quiz.availableUntil)}
+                value={dayjs(quiz.availableUntil)}
                 style={{ width: "100%" }}
                 onChange={(date) => handleInputChange("availableUntil", date)}
               />
