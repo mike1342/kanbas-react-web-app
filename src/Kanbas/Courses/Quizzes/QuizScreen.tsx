@@ -17,17 +17,17 @@ const QuizScreen = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quiz, setQuiz] = useState<Quiz>({
-    title: "",
+    title: "Unnamed Quiz",
     quizType: "gradedQuiz",
     points: 0,
     assignmentGroup: "quiz",
-    shuffleAnswers: false,
-    timeLimit: 0,
+    shuffleAnswers: true,
+    timeLimit: 20,
     multipleAttempts: false,
-    howManyAttempts: 0,
+    howManyAttempts: 1,
     showCorrectAnswers: false,
     accessCode: "",
-    oneQuestionAtATime: false,
+    oneQuestionAtATime: true,
     webcamRequired: false,
     lockQuestionsAfterAnswering: false,
     dueDate: new Date(),
@@ -43,14 +43,24 @@ const QuizScreen = () => {
 
   useEffect(() => {
     const fetchQuiz = async () => {
-      if (!qid) return;
-      const quiz = await quizClient.getQuizById(qid as string);
-      setQuiz(quiz);
+      try {
+        if (!qid) {
+          setError("Quiz ID is missing.");
+          setLoading(false);
+          return;
+        }
+        const fetchedQuiz = await quizClient.getQuizById(qid as string);
+        setQuiz(fetchedQuiz);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching quiz:", err);
+        setError("Failed to load quiz.");
+        setLoading(false);
+      }
     };
-
     fetchQuiz();
   }, [qid]);
-
+  
   const handleNextQuestion = () => {
     if (currentQuestionIndex < quiz.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -65,7 +75,10 @@ const QuizScreen = () => {
 
   const handleSubmit = () => {};
 
-  const renderQuestion = (question: Question) => {
+  const renderQuestion = (question: Question | undefined) => {
+    if (!question) {
+      return <div style={{ color: "red" }}>Invalid or missing question.</div>;
+    }
     switch (question.questionType) {
       case "MC":
         const mcQuestion = question as MCQuestion;
