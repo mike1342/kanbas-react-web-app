@@ -9,8 +9,8 @@ import { FaRocket } from "react-icons/fa";
 import { Quiz } from "../../../types";
 import { RootState } from "../../store";
 import * as coursesClient from "../client";
-import { setQuizzes } from "./reducer";
-import StartQuiz from "./StartQuiz";
+import { setQuizzes, deleteQuiz } from "./reducer";
+import * as quizClient from "./client";
 
 export default function Quizzes() {
   const { cid } = useParams();
@@ -33,8 +33,12 @@ export default function Quizzes() {
   };
 
   const handleEdit = () => {};
-
   const handleDelete = () => {};
+
+  const removeQuiz = async (quizId: string) => {
+    await quizClient.deleteQuiz(quizId);
+    dispatch(deleteQuiz(quizId));
+  };
 
   const handlePublishToggle = () => {
     setIsPublished(!isPublished);
@@ -111,7 +115,7 @@ export default function Quizzes() {
               <div className="wd-title border p-3 ps-2">
                 <IoMdArrowDropdown className="me-2 fs-3" />
                 <span className="fw-bold">Assignment Quizzes</span>
-                {currentUser.role === "FACULTY" && <QuizzesControlButtons />}
+                {/* {currentUser.role === "FACULTY" && <QuizzesControlButtons />} */}
               </div>
               {quizzes && (
                 <ul id="wd-quiz-list" className="list-group rounded-0">
@@ -157,14 +161,17 @@ export default function Quizzes() {
                             <strong>Availability: </strong> {availabilityStatus}{" "}
                             | <strong>Due: </strong>
                             {dateFormat(quiz.dueDate.toString())} |{" "}
-                            {quiz.points} pts |{" "}
-                            {quiz.questions.length} Questions
+                            {quiz.points} pts | {quiz.questions.length}{" "}
+                            Questions
                           </p>
                         </div>
                         <div className="d-flex flex-grow-1" />
                         {currentUser.role === "FACULTY" && (
                           <div className="quiz-item-control-btns">
-                            <QuizzesControlButtons />
+                            <QuizzesControlButtons
+                              deleteQuiz={removeQuiz}
+                              quizId={quiz._id || ""}
+                            />
                           </div>
                         )}
                       </li>

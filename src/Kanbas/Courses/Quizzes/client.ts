@@ -17,3 +17,8 @@ export const updateQuiz = async(quiz: Quiz) => {
     const { data } = await axiosWithCredentials.put(`${REMOTE_SERVER}/updateQuiz`, quiz);
     return data;
 }
+
+export const deleteQuiz = async (quizId: string) => {
+    const response = await axios.delete(`${REMOTE_SERVER}/deleteQuiz/${quizId}`);
+    return response.data;
+   };
