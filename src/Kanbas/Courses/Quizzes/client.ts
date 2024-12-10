@@ -12,3 +12,8 @@ export const getQuizById = async (id: string) => {
     const { data } = await axiosWithCredentials.get(`${REMOTE_SERVER}/getQuizById/${id}`);
     return data;
 }
+
+export const updateQuiz = async(quiz: Quiz) => {
+    const { data } = await axiosWithCredentials.put(`${REMOTE_SERVER}/updateQuiz`, quiz);
+    return data;
+}

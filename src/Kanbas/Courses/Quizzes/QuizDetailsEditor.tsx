@@ -66,17 +66,26 @@ export default function QuizDetailsEditor() {
         message.error("Please add at least one question in Questions.");
         return;
       }
+
       let totalPoints = 0;
       for (const question of quiz.questions) {
         totalPoints += question.points;
       }
 
-      const savedQuiz = await quizClient.addQuiz({
+      const payload = {
         ...quiz,
         isPublished: publish,
         points: totalPoints,
         cid: cid as string,
-      });
+      };
+
+      let savedQuiz;
+      if (quiz._id) {
+        // If quiz has an `_id`, call updateQuiz to update the existing quiz
+        savedQuiz = await quizClient.updateQuiz(payload);
+      } else {
+        savedQuiz = await quizClient.addQuiz(payload);
+      }
 
       if (savedQuiz) {
         message.success("Quiz saved successfully!");
