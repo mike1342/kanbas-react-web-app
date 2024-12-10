@@ -7,12 +7,36 @@ import { useParams } from "react-router";
 import { getQuizById } from "./client";
 
 const QuizDetailsScreen = () => {
-  const [quiz, setQuiz] = useState<Quiz>();
+  const [quiz, setQuiz] = useState<Quiz>({
+    title: "",
+    quizType: "gradedQuiz",
+    points: 0,
+    assignmentGroup: "quiz",
+    shuffleAnswers: false,
+    timeLimit: 0,
+    multipleAttempts: false,
+    howManyAttempts: 0,
+    showCorrectAnswers: false,
+    accessCode: "",
+    oneQuestionAtATime: false,
+    webcamRequired: false,
+    lockQuestionsAfterAnswering: false,
+    dueDate: new Date(),
+    availableFrom: new Date(),
+    availableUntil: new Date(),
+    questions: [],
+    quizAttempts: [],
+    description: "",
+    isPublished: false,
+    cid: "",
+  });
   const { cid, qid } = useParams();
 
   useEffect(() => {
     // Fetch quiz details
     const fetchQuiz = async () => {
+      console.log(qid);
+      if (!qid) return;
       const quiz = await getQuizById(qid as string);
       setQuiz(quiz);
     };
@@ -49,14 +73,12 @@ const QuizDetailsScreen = () => {
       <div className="d-flex justify-content-end">
         <Space size="small">
           <Button>Preview</Button>
-          <Button>
-            <a
-              href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizDetailsEditor`}
-            >
+          <a href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizDetailsEditor`}>
+            <Button>
               <FaPencil />
-            </a>
-            Edit
-          </Button>
+              Edit
+            </Button>
+          </a>
         </Space>
       </div>
       <hr />

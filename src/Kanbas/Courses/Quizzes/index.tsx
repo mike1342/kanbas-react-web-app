@@ -10,6 +10,7 @@ import { Quiz } from "../../../types";
 import { RootState } from "../../store";
 import * as coursesClient from "../client";
 import { setQuizzes } from "./reducer";
+import StartQuiz from "./StartQuiz";
 
 export default function Quizzes() {
   const { cid } = useParams();
@@ -144,7 +145,11 @@ export default function Quizzes() {
                         <div className="d-inline-block align-items-center">
                           <a
                             className="wd-quiz-link text-decoration-none text-dark fw-bold"
-                            href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/QuizDetailsScreen`}
+                            href={
+                              currentUser.role === "FACULTY"
+                                ? `#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/QuizDetailsScreen`
+                                : `#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/StartQuiz`
+                            }
                           >
                             {quiz.title}
                           </a>

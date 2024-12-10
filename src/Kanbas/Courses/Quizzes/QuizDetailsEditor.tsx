@@ -16,19 +16,42 @@ export default function QuizDetailsEditor() {
     console.log(key);
   };
 
-  const [quiz, setQuiz] = useState<Quiz>();
+  const [quiz, setQuiz] = useState<Quiz>({
+    title: "",
+    quizType: "gradedQuiz",
+    points: 0,
+    assignmentGroup: "quiz",
+    shuffleAnswers: false,
+    timeLimit: 0,
+    multipleAttempts: false,
+    howManyAttempts: 0,
+    showCorrectAnswers: false,
+    accessCode: "",
+    oneQuestionAtATime: false,
+    webcamRequired: false,
+    lockQuestionsAfterAnswering: false,
+    dueDate: new Date(),
+    availableFrom: new Date(),
+    availableUntil: new Date(),
+    questions: [],
+    quizAttempts: [],
+    description: "",
+    isPublished: false,
+    cid: "",
+  });
   const { qid } = useParams();
 
   useEffect(() => {
     // Fetch quiz details
     const fetchQuiz = async () => {
+      if (!qid) return;
       const quiz = await quizClient.getQuizById(qid as string);
       console.log(quiz);
       setQuiz(quiz);
     };
 
     fetchQuiz();
-  }, [qid]);
+  }, [cid, qid]);
 
   if (!quiz) return <div>Loading...</div>;
 
@@ -66,18 +89,28 @@ export default function QuizDetailsEditor() {
       message.error("An error occurred while saving the quiz.");
     }
   };
+
   const items: TabsProps["items"] = [
     {
       key: "1",
       label: "Details",
       children: (
-        <Details quiz={quiz} setQuiz={setQuiz as React.Dispatch<SetStateAction<Quiz>>} handleSave={handleSave} />
+        <Details
+          quiz={quiz}
+          setQuiz={setQuiz as React.Dispatch<SetStateAction<Quiz>>}
+          handleSave={handleSave}
+        />
       ),
     },
     {
       key: "2",
       label: "Questions",
-      children: <Questions quiz={quiz} setQuiz={setQuiz as React.Dispatch<SetStateAction<Quiz>>} />,
+      children: (
+        <Questions
+          quiz={quiz}
+          setQuiz={setQuiz as React.Dispatch<SetStateAction<Quiz>>}
+        />
+      ),
     },
   ];
   return (

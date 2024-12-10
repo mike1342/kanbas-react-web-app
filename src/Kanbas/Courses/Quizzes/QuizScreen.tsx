@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Radio, Input, Typography, Space, Divider, Card } from "antd";
 import {
   Quiz,
@@ -7,11 +7,49 @@ import {
   TFQuestion,
   FillInQuestion,
 } from "./../../../types";
+import { useParams } from "react-router";
+import * as quizClient from "./client";
 
 const { Title, Paragraph } = Typography;
 
-const QuizScreen: React.FC<{ quiz: Quiz }> = ({ quiz }) => {
+const QuizScreen = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [quiz, setQuiz] = useState<Quiz>({
+    title: "",
+    quizType: "gradedQuiz",
+    points: 0,
+    assignmentGroup: "quiz",
+    shuffleAnswers: false,
+    timeLimit: 0,
+    multipleAttempts: false,
+    howManyAttempts: 0,
+    showCorrectAnswers: false,
+    accessCode: "",
+    oneQuestionAtATime: false,
+    webcamRequired: false,
+    lockQuestionsAfterAnswering: false,
+    dueDate: new Date(),
+    availableFrom: new Date(),
+    availableUntil: new Date(),
+    questions: [],
+    quizAttempts: [],
+    description: "",
+    isPublished: false,
+    cid: "",
+  });
+  const { qid } = useParams();
+
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      if (!qid) return;
+      const quiz = await quizClient.getQuizById(qid as string);
+      setQuiz(quiz);
+    };
+
+    fetchQuiz();
+  }, [qid]);
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < quiz.questions.length - 1) {

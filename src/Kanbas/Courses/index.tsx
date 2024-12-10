@@ -9,6 +9,7 @@ import PeopleTable from "./People/Table";
 import Quizzes from "./Quizzes";
 import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
 import QuizDetailsScreen from "./Quizzes/QuizDetailsScreen";
+import StartQuiz from "./Quizzes/StartQuiz";
 
 const Courses = ({ courses }: { courses: any[] }) => {
   const { cid } = useParams();
@@ -47,6 +48,7 @@ const Courses = ({ courses }: { courses: any[] }) => {
               path="Quizzes/:qid/QuizDetailsEditor"
               element={<QuizDetailsEditor />}
             />
+            <Route path="Quizzes/:qid/StartQuiz" element={<StartQuiz />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>
