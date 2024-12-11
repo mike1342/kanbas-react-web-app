@@ -33,6 +33,7 @@ export default function Details({
   return (
     <div id="wd-quiz-details">
       <hr />
+      <h5 className="text-end me-4">Points: {quiz.points}</h5>
       <Form
         name="layout-multiple-horizontal"
         layout="horizontal"

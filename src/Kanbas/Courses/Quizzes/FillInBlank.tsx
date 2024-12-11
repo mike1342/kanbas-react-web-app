@@ -20,7 +20,7 @@ export default function FillInBlank({
         ...updatedQuestions[index],
         correctAnswers: answers,
       } as FillInQuestion;
-      return { ...prevQuiz, questions: updatedQuestions };
+      return { ...prevQuiz, questions: updatedQuestions, points: updatedQuestions.reduce((acc, q) => acc + q.points, 0) };
     });
   };
 

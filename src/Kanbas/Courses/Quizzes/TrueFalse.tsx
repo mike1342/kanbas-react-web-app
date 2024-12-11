@@ -23,7 +23,7 @@ export default function TrueFalse({
         ...updatedQuestions[index],
         [field]: value,
       } as TFQuestion;
-      return { ...prevQuiz, questions: updatedQuestions };
+      return { ...prevQuiz, questions: updatedQuestions, points: updatedQuestions.reduce((acc, q) => acc + q.points, 0) };
     });
   };
 

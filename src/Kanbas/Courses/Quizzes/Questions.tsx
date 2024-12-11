@@ -97,6 +97,7 @@ export default function Questions({
         }
         return q;
       }),
+      points: updatedQuestions.reduce((acc, q) => acc + q.points, 0),
     }));
   };
 

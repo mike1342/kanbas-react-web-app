@@ -9,7 +9,7 @@ import { FaRocket } from "react-icons/fa";
 import { Quiz } from "../../../types";
 import { RootState } from "../../store";
 import * as coursesClient from "../client";
-import { setQuizzes, deleteQuiz } from "./reducer";
+import { setQuizzes, deleteQuiz, updateQuiz } from "./reducer";
 import * as quizClient from "./client";
 import { Link } from "react-router-dom";
 
@@ -19,7 +19,6 @@ export default function Quizzes() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { quizzes } = useSelector((state: RootState) => state.quizzesReducer);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [isPublished, setIsPublished] = useState(false);
 
   const fetchQuizzes = async () => {
     const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
@@ -41,8 +40,10 @@ export default function Quizzes() {
     dispatch(deleteQuiz(quizId));
   };
 
-  const handlePublishToggle = () => {
-    setIsPublished(!isPublished);
+  const handlePublishToggle = async (publish: boolean, quiz: Quiz) => {
+    const updatedQuiz = { ...quiz, isPublished: publish };
+    await quizClient.updateQuiz(updatedQuiz);
+    dispatch(updateQuiz(updatedQuiz));
   };
 
   const dateFormat = (dateStr: string) => {
@@ -85,12 +86,6 @@ export default function Quizzes() {
                     onClick={handleDelete}
                   >
                     Delete
-                  </button>
-                  <button
-                    className="dropdown-item"
-                    onClick={handlePublishToggle}
-                  >
-                    {isPublished ? "Unpublish" : "Publish"}
                   </button>
                 </div>
               )}
@@ -172,7 +167,8 @@ export default function Quizzes() {
                           <div className="quiz-item-control-btns">
                             <QuizzesControlButtons
                               deleteQuiz={removeQuiz}
-                              quizId={quiz._id || ""}
+                              quiz={quiz}
+                              handlePublishToggle={handlePublishToggle}
                             />
                           </div>
                         )}

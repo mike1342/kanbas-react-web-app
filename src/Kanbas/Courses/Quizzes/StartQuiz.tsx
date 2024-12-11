@@ -125,7 +125,7 @@ const StartQuiz = () => {
           </Button>
         </a>
       </div>
-      <QuizAttemptScreen quiz={quiz} />
+      <QuizAttemptScreen quiz={quiz} latestAttempt={quizAttempts[0]} />
     </div>
   );
 };

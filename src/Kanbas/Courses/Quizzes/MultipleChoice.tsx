@@ -27,7 +27,7 @@ export default function MultipleChoice({
         } as Question;
       }
 
-      return { ...prevQuiz, questions: updatedQuestions };
+      return { ...prevQuiz, questions: updatedQuestions, points: updatedQuestions.reduce((acc, q) => acc + q.points, 0) };
     });
   };
 

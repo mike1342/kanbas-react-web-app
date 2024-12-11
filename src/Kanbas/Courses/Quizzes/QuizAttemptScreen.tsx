@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Quiz,
   QuizAttempt,
@@ -12,23 +11,15 @@ import {
   FillInQuestionAttempt,
 } from "../../../types";
 import { Card, Radio, Typography, Input, Space } from "antd";
-import { getQuizAttemptsForQuiz } from "./client";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router";
 
 const { Title } = Typography;
 
 interface QuizAttemptScreenProps {
   quiz: Quiz;
+  latestAttempt: QuizAttempt | null;
 }
 
-const QuizAttemptScreen = ({ quiz }: QuizAttemptScreenProps) => {
-  const { qid } = useParams();
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
-
-  const [latestAttempt, setLatestAttempt] = useState<QuizAttempt | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const QuizAttemptScreen = ({ quiz, latestAttempt }: QuizAttemptScreenProps) => {
 
   const getStudentAnswer = (
     question: Question,
@@ -149,43 +140,6 @@ const QuizAttemptScreen = ({ quiz }: QuizAttemptScreenProps) => {
     );
   };
 
-  useEffect(() => {
-    const fetchLatestAttempt = async () => {
-      if (!qid) {
-        setError("Quiz ID is missing.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const attempts = await getQuizAttemptsForQuiz(qid, currentUser._id);
-        const sortedAttempts = attempts.sort(
-          (
-            a: { timeEnded: string | number | Date },
-            b: { timeEnded: string | number | Date }
-          ) => new Date(b.timeEnded).getTime() - new Date(a.timeEnded).getTime()
-        );
-        const latest = sortedAttempts.length > 0 ? sortedAttempts[0] : null;
-        setLatestAttempt(latest);
-      } catch (err) {
-        console.error("Error fetching quiz attempts:", err);
-        setError("Failed to load the latest attempt.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLatestAttempt();
-  }, [qid, currentUser._id]);
-
-  if (loading) {
-    return <p>Loading latest attempt...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
   if (!latestAttempt) {
     return <p>No attempts available.</p>;
   }
@@ -212,7 +166,7 @@ const QuizAttemptScreen = ({ quiz }: QuizAttemptScreenProps) => {
       <hr />
       {quiz.questions.map((question) => {
         const questionAttempt = latestAttempt.answers.find(
-          (answer) => answer._id?.toString() === question._id?.toString()
+          (answer) => answer.question === question.question && answer.title === question.title
         );
         return renderQuestion(question, questionAttempt);
       })}

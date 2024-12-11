@@ -258,6 +258,26 @@ const QuizScreen = () => {
         return null;
     }
   };
+
+  const renderSubmit = () => (
+    currentUser.role === "FACULTY" ? (
+      <Button
+        type="primary"
+        danger
+        onClick={() => navigate(-1)}
+      >
+        Exit
+      </Button>
+    ) : (
+      <Button
+        type="primary"
+        danger
+        onClick={handleSubmit}
+      >
+        Submit
+      </Button>
+    ));
+
   return (
     <div style={{ padding: "24px" }}>
       {currentUser.role === "FACULTY" && (
@@ -292,14 +312,7 @@ const QuizScreen = () => {
                 Next
               </Button>
             ) : (
-              <Button
-                type="primary"
-                danger
-                onClick={handleSubmit}
-                disabled={currentUser.role === "FACULTY"}
-              >
-                Submit
-              </Button>
+             renderSubmit()
             )}
           </div>
           <br />
@@ -310,14 +323,7 @@ const QuizScreen = () => {
             <div key={question._id}>{renderQuestion(question)}</div>
           ))}
           <div className="d-flex justify-content-end">
-            <Button
-              type="primary"
-              danger
-              onClick={handleSubmit}
-              disabled={currentUser.role === "FACULTY"}
-            >
-              Submit
-            </Button>
+            {renderSubmit()}
           </div>
         </Space>
       )}
