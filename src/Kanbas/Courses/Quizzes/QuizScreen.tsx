@@ -16,8 +16,12 @@ import {
   TFQuestion,
   FillInQuestion,
   QuizAttempt,
+  QuestionAttempt,
+  MCQuestionAttempt,
+  TFQuestionAttempt,
+  FillInQuestionAttempt,
 } from "./../../../types";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import * as quizClient from "./client";
 import { useSelector } from "react-redux";
 import { FaPencil } from "react-icons/fa6";
@@ -25,6 +29,7 @@ import { FaPencil } from "react-icons/fa6";
 const { Title, Paragraph } = Typography;
 
 const QuizScreen = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>([]);
@@ -95,6 +100,7 @@ const QuizScreen = () => {
   };
 
   const handleAnswerChange = (questionId: string, answer: any) => {
+    console.log(questionId, answer);
     setSelectedAnswers((prev) => ({
       ...prev,
       [questionId]: answer,
@@ -128,22 +134,69 @@ const QuizScreen = () => {
     return score;
   };
 
+  const makeQuestionAttempt = (question: Question): QuestionAttempt | null => {
+    let initAttempt = {
+      _id: question._id,
+      title: question.title,
+      question: question.question,
+      questionType: question.questionType,
+    };
+    switch (question.questionType) {
+      case "MC":
+        const mcQuestion = question as MCQuestion;
+        return {
+          ...initAttempt,
+          choices: mcQuestion.choices,
+          correctAnswer: mcQuestion.correctAnswer,
+          selectedChoice: selectedAnswers[question._id],
+          points:
+            selectedAnswers[question._id] === mcQuestion.correctAnswer
+              ? question.points
+              : 0,
+        } as MCQuestionAttempt;
+      case "TF":
+        const tfQuestion = question as TFQuestion;
+        return {
+          ...initAttempt,
+          correctAnswer: tfQuestion.correctAnswer,
+          selectedAnswer: selectedAnswers[question._id],
+          points:
+            selectedAnswers[question._id] === tfQuestion.correctAnswer
+              ? question.points
+              : 0,
+        } as TFQuestionAttempt;
+      case "FillIn":
+        const fillInQuestion = question as FillInQuestion;
+        return {
+          ...initAttempt,
+          correctAnswers: fillInQuestion.correctAnswers,
+          selectedAnswer: selectedAnswers[question._id],
+          points: fillInQuestion.correctAnswers.includes(
+            selectedAnswers[question._id]?.trim().toLowerCase()
+          )
+            ? question.points
+            : 0,
+        } as FillInQuestionAttempt;
+      default:
+        return null;
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const timeEnded = new Date();
-      const attempt = {
+      const attempt: QuizAttempt = {
         quizId: qid as string,
         studentId: currentUser._id,
         score: calculateScore(),
         timeStarted: new Date(), // Replace with actual time started
         timeEnded,
-        answers: quiz.questions.map((q) => ({
-          _id: q._id,
-          questionType: q.questionType,
-          selectedAnswer: selectedAnswers[q._id],
-        })),
+        answers: quiz.questions.map(
+          (q) => makeQuestionAttempt(q) as QuestionAttempt
+        ),
       };
       await quizClient.saveQuizAttempt(attempt);
+      navigate(-1);
     } catch (err) {
       console.error("Error submitting quiz:", err);
     }
@@ -160,9 +213,8 @@ const QuizScreen = () => {
           <Card bordered style={{ marginBottom: "16px" }}>
             <Title level={4}>{mcQuestion.question}</Title>
             <Radio.Group
-              onChange={(e) =>
-                handleAnswerChange(question._id, e.target.value)
-              }
+              onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+              value={selectedAnswers[mcQuestion._id] || -1}
             >
               <Space direction="vertical">
                 {mcQuestion.choices.map((choice, index) => (
@@ -180,13 +232,12 @@ const QuizScreen = () => {
           <Card bordered style={{ marginBottom: "16px" }}>
             <Title level={4}>{tfQuestion.question}</Title>
             <Radio.Group
-              onChange={(e) =>
-                handleAnswerChange(question._id, e.target.value)
-              }
+              onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+              value={selectedAnswers[tfQuestion._id] || -1}
             >
               <Space direction="vertical">
-                <Radio value={true}>True</Radio>
-                <Radio value={false}>False</Radio>
+                <Radio checked={selectedAnswers[tfQuestion._id]} value={true}>True</Radio>
+                <Radio checked={!selectedAnswers[tfQuestion._id]} value={false}>False</Radio>
               </Space>
             </Radio.Group>
           </Card>
@@ -198,9 +249,8 @@ const QuizScreen = () => {
             <Title level={4}>{fillInQuestion.question}</Title>
             <Input
               placeholder="Type your answer"
-              onChange={(e) =>
-                handleAnswerChange(question._id, e.target.value)
-              }
+              onChange={(e) => handleAnswerChange(question._id, e.target.value)}
+              value={selectedAnswers[fillInQuestion._id] || ''}
             />
           </Card>
         );
