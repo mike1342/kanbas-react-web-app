@@ -51,6 +51,7 @@ const Courses = ({ courses }: { courses: any[] }) => {
             />
             <Route path="Quizzes/:qid/StartQuiz" element={<StartQuiz />} />
             <Route path="Quizzes/:qid/QuizScreen" element={<QuizScreen />} />
+            <Route path="Quizzes/:qid/Preview" element={<QuizScreen />} />
             <Route path="People" element={<PeopleTable />} />
           </Routes>
         </div>

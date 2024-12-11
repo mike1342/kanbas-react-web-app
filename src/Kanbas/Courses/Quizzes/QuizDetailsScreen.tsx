@@ -5,6 +5,7 @@ import React from "react";
 import { FaPencil } from "react-icons/fa6";
 import { useParams } from "react-router";
 import { getQuizById } from "./client";
+import { Link } from "react-router-dom";
 
 const QuizDetailsScreen = () => {
   const [quiz, setQuiz] = useState<Quiz>({
@@ -72,7 +73,9 @@ const QuizDetailsScreen = () => {
     <div className="quiz-details-screen">
       <div className="d-flex justify-content-end">
         <Space size="small">
-          <Button>Preview</Button>
+          <a href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/Preview`}>
+            <Button>Preview</Button>
+          </a>
           <a href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizDetailsEditor`}>
             <Button>
               <FaPencil />

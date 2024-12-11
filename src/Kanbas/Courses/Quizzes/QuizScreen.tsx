@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Radio, Input, Typography, Space, Divider, Card } from "antd";
+import {
+  Button,
+  Radio,
+  Input,
+  Typography,
+  Space,
+  Divider,
+  Card,
+  Alert,
+} from "antd";
 import {
   Quiz,
   Question,
@@ -9,6 +18,8 @@ import {
 } from "./../../../types";
 import { useParams } from "react-router";
 import * as quizClient from "./client";
+import { useSelector } from "react-redux";
+import { FaPencil } from "react-icons/fa6";
 
 const { Title, Paragraph } = Typography;
 
@@ -39,7 +50,7 @@ const QuizScreen = () => {
     isPublished: false,
     cid: "",
   });
-  const { qid } = useParams();
+  const { cid, qid } = useParams();
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -124,9 +135,16 @@ const QuizScreen = () => {
         return null;
     }
   };
-
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
   return (
     <div style={{ padding: "24px" }}>
+      {currentUser.role === "FACULTY" && (
+        <Alert
+          message="This is a preview of the published version of this quiz"
+          type="warning"
+          showIcon
+        />
+      )}
       <Title>{quiz.title}</Title>
       <Paragraph>{quiz.description}</Paragraph>
       <Divider />
@@ -152,18 +170,44 @@ const QuizScreen = () => {
                 Next
               </Button>
             ) : (
-              <Button type="primary" danger onClick={handleSubmit}>
+              <Button
+                type="primary"
+                danger
+                onClick={handleSubmit}
+                disabled={currentUser.role === "FACULTY"}
+              >
                 Submit
               </Button>
             )}
           </div>
+          <br />
         </div>
       ) : (
         <Space direction="vertical" style={{ width: "100%" }}>
           {quiz.questions.map((question) => (
             <div key={question._id}>{renderQuestion(question)}</div>
           ))}
+          <div className="d-flex justify-content-end">
+            <Button
+              type="primary"
+              danger
+              onClick={handleSubmit}
+              disabled={currentUser.role === "FACULTY"}
+            >
+              Submit
+            </Button>
+          </div>
         </Space>
+      )}
+      {currentUser.role === "FACULTY" && (
+        <div className="d-flex justify-content-evenly">
+          <a href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizDetailsEditor`}>
+            <Button color="default" variant="outlined">
+              <FaPencil />
+              Keep Editing This Quiz
+            </Button>
+          </a>
+        </div>
       )}
     </div>
   );
