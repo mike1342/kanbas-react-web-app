@@ -11,6 +11,7 @@ import { RootState } from "../../store";
 import * as coursesClient from "../client";
 import { setQuizzes, deleteQuiz } from "./reducer";
 import * as quizClient from "./client";
+import { Link } from "react-router-dom";
 
 export default function Quizzes() {
   const { cid } = useParams();
@@ -147,16 +148,17 @@ export default function Quizzes() {
                         <BsGripVertical className="me-2 fs-3" />
                         <FaRocket className="me-2 fs-3 text-success" />
                         <div className="d-inline-block align-items-center">
-                          <a
+                          <Link
                             className="wd-quiz-link text-decoration-none text-dark fw-bold"
-                            href={
+                            to={
                               currentUser.role === "FACULTY"
-                                ? `#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/QuizDetailsScreen`
-                                : `#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/StartQuiz`
+                                ? `/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/QuizDetailsScreen`
+                                : `/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/StartQuiz`
                             }
+                            state={{ quiz }}
                           >
                             {quiz.title}
-                          </a>
+                          </Link>
                           <p className="quiz-info fs-6 mb-0">
                             <strong>Availability: </strong> {availabilityStatus}{" "}
                             | <strong>Due: </strong>

@@ -60,7 +60,7 @@ const QuizScreen = () => {
     };
     fetchQuiz();
   }, [qid]);
-  
+
   const handleNextQuestion = () => {
     if (currentQuestionIndex < quiz.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);

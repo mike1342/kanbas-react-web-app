@@ -22,3 +22,13 @@ export const deleteQuiz = async (quizId: string) => {
     const response = await axios.delete(`${REMOTE_SERVER}/deleteQuiz/${quizId}`);
     return response.data;
    };
+
+export const getQuizAttemptsForQuiz = async (cid: string, uid: string) => {
+    const { data } = await axiosWithCredentials.get(`${REMOTE_SERVER}/getQuizAttemptsForQuiz/${cid}/${uid}`);
+    return data;
+};
+
+export const saveQuizAttempt = async (quizAttempt: any) => {
+    const { data } = await axiosWithCredentials.post(`${REMOTE_SERVER}/saveQuizAttempt`, quizAttempt);
+    return data;
+}
