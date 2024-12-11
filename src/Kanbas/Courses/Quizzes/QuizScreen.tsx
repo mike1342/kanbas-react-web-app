@@ -15,6 +15,7 @@ import {
   MCQuestion,
   TFQuestion,
   FillInQuestion,
+  QuizAttempt,
 } from "./../../../types";
 import { useParams } from "react-router";
 import * as quizClient from "./client";
@@ -26,6 +27,7 @@ const { Title, Paragraph } = Typography;
 const QuizScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quiz, setQuiz] = useState<Quiz>({
     title: "Unnamed Quiz",
@@ -51,9 +53,12 @@ const QuizScreen = () => {
     cid: "",
   });
   const { cid, qid } = useParams();
-
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const [selectedAnswers, setSelectedAnswers] = useState<{
+    [key: string]: any;
+  }>({});
   useEffect(() => {
-    const fetchQuiz = async () => {
+    const fetchQuizData = async () => {
       try {
         if (!qid) {
           setError("Quiz ID is missing.");
@@ -61,7 +66,12 @@ const QuizScreen = () => {
           return;
         }
         const fetchedQuiz = await quizClient.getQuizById(qid as string);
+        const attempts = await quizClient.getQuizAttemptsForQuiz(
+          qid,
+          currentUser._id
+        );
         setQuiz(fetchedQuiz);
+        setQuizAttempts(attempts);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching quiz:", err);
@@ -69,8 +79,8 @@ const QuizScreen = () => {
         setLoading(false);
       }
     };
-    fetchQuiz();
-  }, [qid]);
+    fetchQuizData();
+  }, [qid, currentUser._id]);
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < quiz.questions.length - 1) {
@@ -84,7 +94,60 @@ const QuizScreen = () => {
     }
   };
 
-  const handleSubmit = () => {};
+  const handleAnswerChange = (questionId: string, answer: any) => {
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [questionId]: answer,
+    }));
+  };
+
+  const calculateScore = () => {
+    let score = 0;
+    quiz.questions.forEach((question) => {
+      if (question.questionType === "MC") {
+        const mcQuestion = question as MCQuestion;
+        if (selectedAnswers[question._id] === mcQuestion.correctAnswer) {
+          score += question.points;
+        }
+      } else if (question.questionType === "TF") {
+        const tfQuestion = question as TFQuestion;
+        if (selectedAnswers[question._id] === tfQuestion.correctAnswer) {
+          score += question.points;
+        }
+      } else if (question.questionType === "FillIn") {
+        const fillInQuestion = question as FillInQuestion;
+        if (
+          fillInQuestion.correctAnswers.includes(
+            selectedAnswers[question._id]?.trim().toLowerCase()
+          )
+        ) {
+          score += question.points;
+        }
+      }
+    });
+    return score;
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const timeEnded = new Date();
+      const attempt = {
+        quizId: qid as string,
+        studentId: currentUser._id,
+        score: calculateScore(),
+        timeStarted: new Date(), // Replace with actual time started
+        timeEnded,
+        answers: quiz.questions.map((q) => ({
+          _id: q._id,
+          questionType: q.questionType,
+          selectedAnswer: selectedAnswers[q._id],
+        })),
+      };
+      await quizClient.saveQuizAttempt(attempt);
+    } catch (err) {
+      console.error("Error submitting quiz:", err);
+    }
+  };
 
   const renderQuestion = (question: Question | undefined) => {
     if (!question) {
@@ -96,7 +159,11 @@ const QuizScreen = () => {
         return (
           <Card bordered style={{ marginBottom: "16px" }}>
             <Title level={4}>{mcQuestion.question}</Title>
-            <Radio.Group>
+            <Radio.Group
+              onChange={(e) =>
+                handleAnswerChange(question._id, e.target.value)
+              }
+            >
               <Space direction="vertical">
                 {mcQuestion.choices.map((choice, index) => (
                   <Radio key={index} value={choice}>
@@ -112,7 +179,11 @@ const QuizScreen = () => {
         return (
           <Card bordered style={{ marginBottom: "16px" }}>
             <Title level={4}>{tfQuestion.question}</Title>
-            <Radio.Group>
+            <Radio.Group
+              onChange={(e) =>
+                handleAnswerChange(question._id, e.target.value)
+              }
+            >
               <Space direction="vertical">
                 <Radio value={true}>True</Radio>
                 <Radio value={false}>False</Radio>
@@ -126,8 +197,10 @@ const QuizScreen = () => {
           <Card bordered style={{ marginBottom: "16px" }}>
             <Title level={4}>{fillInQuestion.question}</Title>
             <Input
-              placeholder="Type your answer here"
-              style={{ width: "100%", maxWidth: "400px" }}
+              placeholder="Type your answer"
+              onChange={(e) =>
+                handleAnswerChange(question._id, e.target.value)
+              }
             />
           </Card>
         );
@@ -135,7 +208,6 @@ const QuizScreen = () => {
         return null;
     }
   };
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
   return (
     <div style={{ padding: "24px" }}>
       {currentUser.role === "FACULTY" && (

@@ -29,6 +29,6 @@ export const getQuizAttemptsForQuiz = async (cid: string, uid: string) => {
 };
 
 export const saveQuizAttempt = async (quizAttempt: any) => {
-    const { data } = await axiosWithCredentials.post(`${REMOTE_SERVER}/saveQuizAttempt`, quizAttempt);
+    const { data } = await axiosWithCredentials.post(`${REMOTE_SERVER}/submitQuizAttempt`, quizAttempt);
     return data;
 }

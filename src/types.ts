@@ -38,7 +38,6 @@ export interface FillInQuestionAttempt extends QuestionAttempt, FillInQuestion {
 }
 
 export interface QuizAttempt {
-  selectedChoice: MCQuestionAttempt;
   _id?: string;
   quizId: string;
   studentId: string;
