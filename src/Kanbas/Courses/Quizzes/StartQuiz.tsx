@@ -4,6 +4,7 @@ import { useLocation, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getQuizAttemptsForQuiz } from "./client";
+import QuizAttemptScreen from "./QuizAttemptScreen";
 
 const StartQuiz = () => {
   const { cid, qid } = useParams();
@@ -124,6 +125,7 @@ const StartQuiz = () => {
           </Button>
         </a>
       </div>
+      <QuizAttemptScreen quiz={quiz} />
     </div>
   );
 };
