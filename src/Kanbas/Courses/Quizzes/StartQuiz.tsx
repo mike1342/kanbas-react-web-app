@@ -1,16 +1,20 @@
-import { Button } from "antd";
+import { Button, Modal, Input } from "antd";
 import { Quiz, QuizAttempt } from "../../../types";
 import { useLocation, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getQuizAttemptsForQuiz } from "./client";
-import QuizAttemptScreen from "./QuizAttemptScreen";
+import QuizAttemptComponent from "./QuizAttemptComponent";
+import { Link } from "react-router-dom";
 
 const StartQuiz = () => {
   const { cid, qid } = useParams();
   const location = useLocation();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [accessCode, setAccessCode] = useState("");
+  const [enteredCode, setEnteredCode] = useState("");
 
   const { quiz } = location.state as { quiz: Quiz };
   quiz.dueDate = new Date(quiz.dueDate);
@@ -59,7 +63,15 @@ const StartQuiz = () => {
     <tr className="border-bottom">
       <td>{key === 0 && <b>LATEST</b>}</td>
       {/** TODO: Add <Link> inside the td below */}
-      <td className="text-danger">Attempt {key + 1}</td>
+      <td className="text-danger">
+        <Link
+          to={`/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizAttemptScreen/${quizAttempt._id}`}
+          state={{ quiz, latestAttempt: quizAttempt }}
+          className="text-decoration-none text-danger"
+        >
+          Attempt {key + 1}
+        </Link>
+      </td>
       <td>
         {formatTimeDifference(quizAttempt.timeEnded, quizAttempt.timeStarted)}
       </td>
@@ -68,6 +80,27 @@ const StartQuiz = () => {
       </td>
     </tr>
   );
+
+  const handleStartQuiz = () => {
+    if (quiz.accessCode) {
+      setIsModalVisible(true);
+    } else {
+      window.location.href = `#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizScreen`;
+    }
+  };
+
+  const handleOk = () => {
+    if (enteredCode === quiz.accessCode) {
+      setIsModalVisible(false);
+      window.location.href = `#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizScreen`;
+    } else {
+      alert("Incorrect access code");
+    }
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <div className="start-quiz-screen">
@@ -119,13 +152,29 @@ const StartQuiz = () => {
         className="start-quiz-page"
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <a href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizScreen`}>
-          <Button type="primary" danger disabled={quiz.howManyAttempts <= quizAttempts.length}>
-            Start Quiz
-          </Button>
-        </a>
+        <Button
+          type="primary"
+          danger
+          disabled={quiz.howManyAttempts <= quizAttempts.length}
+          onClick={handleStartQuiz}
+        >
+          Start Quiz
+        </Button>
       </div>
-      <QuizAttemptScreen quiz={quiz} latestAttempt={quizAttempts[0]} />
+      <QuizAttemptComponent quiz={quiz} latestAttempt={quizAttempts[0]} />
+      <Modal
+        title="Enter Access Code"
+        open={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        centered
+      >
+        <Input
+          placeholder="Access Code"
+          value={enteredCode}
+          onChange={(e) => setEnteredCode(e.target.value)}
+        />
+      </Modal>
     </div>
   );
 };
