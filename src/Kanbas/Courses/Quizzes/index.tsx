@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { BsGripVertical, BsThreeDotsVertical } from "react-icons/bs";
+import { useEffect } from "react";
+import { BsGripVertical } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
@@ -18,22 +18,16 @@ export default function Quizzes() {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { quizzes } = useSelector((state: RootState) => state.quizzesReducer);
-  const [menuVisible, setMenuVisible] = useState(false);
 
-  const fetchQuizzes = async () => {
-    const quizzes = await coursesClient.findQuizzesForCourse(cid as string);
-    dispatch(setQuizzes(quizzes));
-  };
+  
   useEffect(() => {
+    const fetchQuizzes = async () => {
+      const quizzes = await coursesClient.findQuizzesForCourse(cid as string, currentUser._id);
+      dispatch(setQuizzes(quizzes));
+    };
+
     fetchQuizzes();
-  }, []);
-
-  const toggleMenu = () => {
-    setMenuVisible(!menuVisible);
-  };
-
-  const handleEdit = () => {};
-  const handleDelete = () => {};
+  }, [cid, currentUser._id, dispatch]);
 
   const removeQuiz = async (quizId: string) => {
     await quizClient.deleteQuiz(quizId);
@@ -69,26 +63,6 @@ export default function Quizzes() {
           </div>
           {currentUser.role === "FACULTY" && (
             <div className="col">
-              <button
-                id="wd-quiz-context-menu"
-                className="btn btn-md btn-secondary me-1 text-black float-end"
-                onClick={toggleMenu}
-              >
-                <BsThreeDotsVertical />
-              </button>
-              {menuVisible && (
-                <div className="dropdown-menu show position-absolute end-0 mt-5">
-                  <button className="dropdown-item" onClick={handleEdit}>
-                    Edit
-                  </button>
-                  <button
-                    className="dropdown-item text-danger"
-                    onClick={handleDelete}
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
               <a
                 id="wd-add-quiz"
                 className="btn btn-md btn-danger me-1 float-end"

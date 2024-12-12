@@ -120,7 +120,7 @@ const StartQuiz = () => {
         style={{ display: "flex", justifyContent: "center" }}
       >
         <a href={`#/Kanbas/Courses/${cid}/Quizzes/${qid}/QuizScreen`}>
-          <Button type="primary" danger>
+          <Button type="primary" danger disabled={quiz.howManyAttempts <= quizAttempts.length}>
             Start Quiz
           </Button>
         </a>

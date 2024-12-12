@@ -5,7 +5,6 @@ import React from "react";
 import { FaPencil } from "react-icons/fa6";
 import { useParams } from "react-router";
 import { getQuizById } from "./client";
-import { Link } from "react-router-dom";
 
 const QuizDetailsScreen = () => {
   const [quiz, setQuiz] = useState<Quiz>({
@@ -54,10 +53,12 @@ const QuizDetailsScreen = () => {
     { label: "Shuffle Answers", value: quiz.shuffleAnswers ? "Yes" : "No" },
     { label: "Time Limit", value: `${quiz.timeLimit} Minutes` },
     { label: "Multiple Attempts", value: quiz.multipleAttempts ? "Yes" : "No" },
+    { label: "How Many Attempts", value: quiz.howManyAttempts },
     {
       label: "Show Correct Answers",
       value: quiz.showCorrectAnswers ? "Yes" : "No",
     },
+    { label: "Access Code", value: quiz.accessCode || "N/A" },
     {
       label: "One Question at a Time",
       value: quiz.oneQuestionAtATime ? "Yes" : "No",
@@ -108,28 +109,19 @@ const QuizDetailsScreen = () => {
           Due
         </Col>
         <Col span={16} style={{ textAlign: "left" }}>
-          {quiz.dueDate?.toLocaleString("en-US", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
+          {new Date(quiz.dueDate)?.toDateString()}
         </Col>
         <Col span={8} style={{ textAlign: "right", fontWeight: "bold" }}>
           Available From
         </Col>
         <Col span={16} style={{ textAlign: "left" }}>
-          {quiz.availableFrom?.toLocaleString("en-US", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
+          {new Date(quiz.availableFrom)?.toDateString()}
         </Col>
         <Col span={8} style={{ textAlign: "right", fontWeight: "bold" }}>
           Until
         </Col>
         <Col span={16} style={{ textAlign: "left" }}>
-          {quiz.availableUntil?.toLocaleString("en-US", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
+          {new Date(quiz.availableUntil)?.toDateString()}
         </Col>
       </Row>
       <hr />

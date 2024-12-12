@@ -33,6 +33,7 @@ const QuizScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>([]);
+  // IMPLEMENT ACCESS CODE
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quiz, setQuiz] = useState<Quiz>({
     title: "Unnamed Quiz",
@@ -290,6 +291,7 @@ const QuizScreen = () => {
       <Title>{quiz.title}</Title>
       <Paragraph>{quiz.description}</Paragraph>
       <Divider />
+      {quiz.accessCode}
       {quiz.oneQuestionAtATime ? (
         <div>
           {renderQuestion(quiz.questions[currentQuestionIndex])}
