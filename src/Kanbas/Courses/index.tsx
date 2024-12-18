@@ -6,8 +6,14 @@ import Assignments from "./Assignments";
 import AssignmentsEditor from "./Assignments/Editor";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
+import Quizzes from "./Quizzes";
+import QuizDetailsEditor from "./Quizzes/QuizDetailsEditor";
+import QuizDetailsScreen from "./Quizzes/QuizDetailsScreen";
+import StartQuiz from "./Quizzes/StartQuiz";
+import QuizScreen from "./Quizzes/QuizScreen";
+import QuizAttemptScreen from "./Quizzes/QuizAttemptScreen";
 
-const Courses = ({ courses }: { courses: any[]; }) => {
+const Courses = ({ courses }: { courses: any[] }) => {
   const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
@@ -21,7 +27,7 @@ const Courses = ({ courses }: { courses: any[]; }) => {
       <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">
-            <CoursesNavigation />
+          <CoursesNavigation />
         </div>
         <div className="flex-fill">
           <Routes>
@@ -30,8 +36,28 @@ const Courses = ({ courses }: { courses: any[]; }) => {
             <Route path="Modules" element={<Modules />} />
             <Route path="Assignments" element={<Assignments />} />
             <Route path="Assignments/:aid" element={<AssignmentsEditor />} />
-            <Route path="Assignments/NewAssignment" element={<AssignmentsEditor />} />
+            <Route
+              path="Assignments/NewAssignment"
+              element={<AssignmentsEditor />}
+            />
+            <Route path="/Quizzes" element={<Quizzes />} />
+            <Route path="Quizzes/NewQuiz" element={<QuizDetailsEditor />} />
+            <Route
+              path="Quizzes/:qid/QuizDetailsScreen"
+              element={<QuizDetailsScreen />}
+            />
+            <Route
+              path="Quizzes/:qid/QuizDetailsEditor"
+              element={<QuizDetailsEditor />}
+            />
+            <Route path="Quizzes/:qid/StartQuiz" element={<StartQuiz />} />
+            <Route path="Quizzes/:qid/QuizScreen" element={<QuizScreen />} />
+            <Route path="Quizzes/:qid/Preview" element={<QuizScreen />} />
             <Route path="People" element={<PeopleTable />} />
+            <Route
+              path="Quizzes/:qid/QuizAttemptScreen/:qaid"
+              element={<QuizAttemptScreen />}
+            />
           </Routes>
         </div>
       </div>

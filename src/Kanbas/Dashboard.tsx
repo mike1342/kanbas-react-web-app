@@ -73,7 +73,10 @@ const Dashboard = ({ courses, userCourses, course, setCourse, addNewCourse,
         <div className="row row-cols-1 row-cols-md-5 g-4">
           {(showAllCourses ? courses : userCourses)
           .map((course) => {
-            const enrollment = enrollments.find((enrollment: any) => checkEnrollment(enrollment, course));
+            let enrollment: any = null;
+            if (Array.isArray(enrollments)) {
+              enrollment = enrollments.find((enrollment: any) => checkEnrollment(enrollment, course));
+            }
             return (
             <div className="wd-dashboard-course col" style={{ width: "270px" }}>
               <div className="card rounded-3 overflow-hidden">
